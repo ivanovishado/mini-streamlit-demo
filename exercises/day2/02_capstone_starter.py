@@ -24,4 +24,4 @@ filtered = data[data["calificacion"] >= min_grade]
 
 # TODO: muestra una grafica por proyecto_ai.
 
-st.dataframe(filtered, use_container_width=True)
+st.dataframe(filtered, width="stretch")

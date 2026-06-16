@@ -125,7 +125,7 @@ def render_filters() -> None:
     )
 
     filtered = filter_students(data, min_grade, program, pandas_level)
-    st.dataframe(filtered, use_container_width=True)
+    st.dataframe(filtered, width="stretch")
 
     st.code(
         """filtered = filter_students(
@@ -163,7 +163,7 @@ def render_capstone() -> None:
     st.bar_chart(project_counts)
 
     st.subheader("Datos filtrados")
-    st.dataframe(filtered, use_container_width=True)
+    st.dataframe(filtered, width="stretch")
 
     csv = filtered.to_csv(index=False).encode("utf-8")
     st.download_button(
