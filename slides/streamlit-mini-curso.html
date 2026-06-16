@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=IBM+Plex+Mono:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/styles/base16/atelier-cave.min.css">
     <style>
         /* ===========================================
            CSS CUSTOM PROPERTIES (THEME)
@@ -366,6 +367,34 @@
             white-space: pre-wrap;
         }
 
+        .code-panel code.hljs {
+            background: transparent;
+            color: #f8f1df;
+            padding: 0;
+            font-family: var(--font-mono);
+            font-size: 25px;
+            line-height: 1.5;
+        }
+
+        .code-panel .hljs-keyword,
+        .code-panel .hljs-built_in {
+            color: var(--gdg-blue);
+        }
+
+        .code-panel .hljs-string,
+        .code-panel .hljs-title {
+            color: var(--gdg-green);
+        }
+
+        .code-panel .hljs-number,
+        .code-panel .hljs-literal {
+            color: var(--gdg-yellow);
+        }
+
+        .code-panel .hljs-comment {
+            color: #aa9f92;
+        }
+
         .accent-blue { color: var(--gdg-blue); }
         .accent-green { color: var(--gdg-green); }
         .accent-red { color: var(--gdg-red); }
@@ -619,7 +648,7 @@
                 <h2 class="reveal" data-editable="true">La app empieza con un archivo Python normal</h2>
                 <div class="two-col">
                     <div class="code-panel reveal-left">
-<pre><code>import streamlit as st
+<pre><code class="language-python">import streamlit as st
 
 st.title("Mi primera app")
 st.write("Hola, datos")</code></pre>
@@ -628,7 +657,7 @@ st.write("Hola, datos")</code></pre>
                         <h3 data-editable="true">Ejecutar</h3>
                         <p data-editable="true">En terminal:</p>
                         <div class="code-panel" style="margin-top: 22px;">
-<pre><code>streamlit run streamlit_app.py</code></pre>
+<pre><code class="language-bash">streamlit run streamlit_app.py</code></pre>
                         </div>
                     </div>
                 </div>
@@ -666,7 +695,7 @@ st.write("Hola, datos")</code></pre>
                 <h2 class="reveal" data-editable="true">Widget -> variable -> filtro -> resultado</h2>
                 <div class="two-col">
                     <div class="code-panel reveal-left">
-<pre><code>min_grade = st.slider(
+<pre><code class="language-python">min_grade = st.slider(
     "Calificacion minima",
     0, 100, 80
 )
@@ -752,7 +781,7 @@ st.dataframe(filtered)</code></pre>
                 <h2 class="reveal" data-editable="true">No recargues datos pesados en cada rerun</h2>
                 <div class="two-col">
                     <div class="code-panel reveal-left">
-<pre><code>@st.cache_data
+<pre><code class="language-python">@st.cache_data
 def get_students():
     return load_students(DATA_PATH)
 
@@ -935,6 +964,7 @@ data = get_students()</code></pre>
     <div class="edit-hotzone" id="editHotzone"></div>
     <button class="edit-toggle" id="editToggle" title="Edit mode (E)">Edit</button>
 
+    <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
     <script>
         /* ===========================================
            SLIDE PRESENTATION CONTROLLER
@@ -1101,6 +1131,9 @@ data = get_students()</code></pre>
 
         new SlidePresentation();
         new InlineEditor();
+        if (window.hljs) {
+            hljs.highlightAll();
+        }
     </script>
 </body>
 </html>
