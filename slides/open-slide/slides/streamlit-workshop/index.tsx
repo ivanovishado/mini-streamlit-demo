@@ -1017,7 +1017,7 @@ const Closing: Page = () => (
                 LinkedIn
               </div>
               <div style={{ fontSize: 16, color: muted, marginTop: 4, fontFamily: mono }}>
-                in/ivan-galaviz
+                in/ivanovishado
               </div>
             </div>
           </div>

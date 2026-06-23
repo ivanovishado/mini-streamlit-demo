@@ -1,5 +1,7 @@
 # Streamlit Mini-Curso: de Notebook a Dashboard de Bitcoin
 
+> Parte del **Curso Intensivo: Python para la Innovación — CUGDL x GDG Guadalajara 2026**.
+
 Repo para un mini-curso de **2 horas** sobre Streamlit. Toma el dataset limpio de Bitcoin de la Semana 3 y lo convierte en un dashboard local con filtros, métricas, gráficas y descarga de datos.
 
 ## Qué incluye
