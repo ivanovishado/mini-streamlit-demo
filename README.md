@@ -1,15 +1,67 @@
-# Streamlit Mini-Curso: Datos a Web Apps
+# Streamlit Mini-Curso: de Notebook a Dashboard de Bitcoin
 
-Repo para un mini-curso de 4 horas sobre Streamlit para estudiantes de ingenieria que ya vieron Pandas. El objetivo es construir una app local donde una persona pueda filtrar datos dinamicamente con sliders y dropdowns.
+Repo para un mini-curso de **2 horas** sobre Streamlit. Toma el dataset limpio de Bitcoin de la Semana 3 y lo convierte en un dashboard local con filtros, métricas, gráficas y descarga de datos.
 
-## Que incluye
+## Qué incluye
 
-- Una app Streamlit completa en `streamlit_app.py`.
-- Datos de ejemplo en `data/estudiantes_ai.csv`.
+- Una app Streamlit completa en `streamlit_app.py` con 5 páginas de navegación.
+- Dataset de Bitcoin en `data/btc_diario_limpio.csv` (5,285 filas diarias, 2012-01-01 → 2026-06-23).
 - Helpers de Pandas en `src/streamlit_course/data_utils.py`.
-- Ejercicios guiados en `exercises/`.
-- Tests basicos en `tests/`.
-- Una presentacion HTML editable en `slides/streamlit-mini-curso.html`.
+- Tests en `tests/`.
+- Una presentación interactiva en `slides/open-slide/` (deck React con open-slide).
+
+## Páginas de la app
+
+1. **Qué es Streamlit** — introducción y modelo mental del rerun.
+2. **Componentes UI** — `st.slider`, `st.selectbox`, `st.button`, `st.code` en acción.
+3. **Pandas interactivo** — widgets conectados a filtros de Pandas sobre el dataset real.
+4. **Dashboard Bitcoin** — sidebar con filtros, seis métricas, tres gráficas, tabla y descarga CSV.
+5. **Despliegue** — vista previa de cómo publicar en Streamlit Community Cloud.
+
+## Dashboard Bitcoin
+
+**Filtros (sidebar):**
+
+- Rango de fechas (mín/máx del dataset).
+- Multiselect de años (opcional).
+- Multiselect de meses (opcional).
+
+**Métricas:**
+
+- Días.
+- Último cierre.
+- Máximo cierre.
+- Retorno diario prom.
+- Volatilidad.
+- Volumen total.
+
+**Gráficas:**
+
+- Precio de cierre por `Date` (línea).
+- Cierre promedio por `Year` (barras).
+- Retorno promedio por `Month_Name` (barras).
+
+**Tabla:**
+
+- DataFrame filtrado con botón `st.download_button` para exportar CSV.
+
+## Dataset
+
+`data/btc_diario_limpio.csv` — columnas:
+
+| Columna        | Descripción                          |
+| -------------- | ------------------------------------ |
+| `Date`         | Fecha diaria.                        |
+| `Open`         | Precio de apertura (USD).            |
+| `High`         | Precio máximo del día (USD).         |
+| `Low`          | Precio mínimo del día (USD).         |
+| `Close`        | Precio de cierre (USD).              |
+| `Volume`       | Volumen negociado (BTC).             |
+| `Year`         | Año derivado de `Date`.              |
+| `Month`        | Mes derivado de `Date` (1-12).       |
+| `Daily_Return` | Retorno porcentual diario (1 NaN).   |
+
+`Month_Name` se deriva al cargar (`Ene`, `Feb`, …, `Dic`).
 
 ## Setup local
 
@@ -40,35 +92,30 @@ uv pip install -r requirements-dev.txt
 streamlit run streamlit_app.py
 ```
 
-## Flujo sugerido de 4 horas
+## Flujo sugerido de 2 horas
 
-### Dia 1
+| Tiempo      | Bloque                                    |
+| ----------- | ----------------------------------------- |
+| 0:00–0:10   | Intro, setup y objetivo.                  |
+| 0:10–0:35   | Modelo mental + primitivas de UI.         |
+| 0:35–1:05   | Widgets conectados a filtros de Pandas.   |
+| 1:05–1:40   | Dashboard Bitcoin (métricas, gráficas).   |
+| 1:40–1:55   | Vista previa de despliegue.               |
+| 1:55–2:00   | Cierre y preguntas.                       |
 
-1. Que es Streamlit y por que sirve para prototipos de datos.
-2. Crear y correr una primera app.
-3. Usar textos, botones, sliders y selectbox.
-4. Entender el modelo de rerun: el script se ejecuta de arriba hacia abajo.
-5. Checkpoint: crear un filtro simple conectado a una variable.
+Cada bloque se acompaña de la app en vivo en `http://localhost:8501`.
 
-### Dia 2
+## Presentación
 
-1. Recap de Pandas con el dataset de ejemplo.
-2. Conectar widgets con filtros de dataframe.
-3. Crear metricas, tabla filtrada y grafica.
-4. Completar el capstone.
-5. Bonus: discutir como Streamlit puede envolver flujos de IA.
+Las slides viven en `slides/open-slide/` como un deck de React con el framework [open-slide](https://open-slide.ai). Para editarlas o presentarlas:
 
-## Reemplazar con materiales de Semana 3
+```bash
+cd slides/open-slide
+npm run dev      # servidor de desarrollo
+npm run build    # build de producción
+```
 
-Cuando tengas el material de Pandas de la semana anterior:
-
-1. Copia el CSV real a `data/`.
-2. Actualiza `DATA_PATH` en `src/streamlit_course/app_pages.py`.
-3. Ajusta `REQUIRED_COLUMNS` en `src/streamlit_course/data_utils.py`.
-4. Cambia los filtros de `filter_students` para usar las columnas reales.
-5. Corre `pytest` y `streamlit run streamlit_app.py`.
-
-La idea es reemplazar el dataset y los filtros, no reescribir toda la interfaz.
+El deck companiona la app: cubre el modelo mental de Streamlit, el dataset de Bitcoin, el patrón widget → filtro → DataFrame, el layout del dashboard y el despliegue.
 
 ## VS Code
 
@@ -78,23 +125,23 @@ Extensiones recomendadas:
 - Jupyter, si los estudiantes traen notebooks de Pandas.
 - Streamlit Runner, opcional para correr apps desde VS Code.
 
-Tambien se incluye `.devcontainer/devcontainer.json` para usar Codespaces como fallback si alguien no logra configurar Python localmente.
+También se incluye `.devcontainer/devcontainer.json` para usar Codespaces como fallback si alguien no logra configurar Python localmente.
 
-## Comandos utiles
+## Comandos útiles
 
 ```bash
-streamlit run streamlit_app.py
-pytest
+streamlit run streamlit_app.py    # correr la app
+pytest                             # tests
+cd slides/open-slide && npm run dev  # presentar las slides
 ```
 
 ## Estructura
 
 ```text
 streamlit_app.py                  # Punto de entrada de la app
-src/streamlit_course/             # Logica reutilizable y paginas
-data/                             # Datos de ejemplo o Semana 3
-exercises/                        # Laboratorios guiados
-solution/                         # Notas de solucion
-slides/                           # Presentacion HTML
+src/streamlit_course/             # Lógica reutilizable y páginas
+data/btc_diario_limpio.csv        # Dataset de Bitcoin (Semana 3)
+solution/                         # Notas de solución
+slides/open-slide/                # Presentación interactiva (open-slide)
 tests/                            # Pruebas automatizadas
 ```

@@ -1,52 +1,72 @@
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
-from src.streamlit_course.data_utils import filter_students, load_students, summarize_students
+from src.streamlit_course.data_utils import filter_bitcoin_data, load_bitcoin_data, summarize_bitcoin_data
 
 
-DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "estudiantes_ai.csv"
+DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "btc_diario_limpio.csv"
 
 
-def test_load_students_reads_expected_columns():
-    data = load_students(DATA_PATH)
+def test_load_bitcoin_data_reads_expected_columns():
+    data = load_bitcoin_data(DATA_PATH)
 
-    assert "calificacion" in data.columns
-    assert "programa" in data.columns
-    assert len(data) == 20
+    assert "Close" in data.columns
+    assert "Daily_Return" in data.columns
+    assert "Month_Name" in data.columns
+    assert len(data) == 5285
 
 
-def test_load_students_rejects_missing_columns(tmp_path):
+def test_load_bitcoin_data_rejects_missing_columns(tmp_path):
     path = tmp_path / "bad.csv"
-    pd.DataFrame({"student_id": [1]}).to_csv(path, index=False)
+    pd.DataFrame({"Date": ["2024-01-01"]}).to_csv(path, index=False)
 
     with pytest.raises(ValueError, match="Faltan columnas requeridas"):
-        load_students(path)
+        load_bitcoin_data(path)
 
 
-def test_filter_students_applies_grade_program_and_pandas_level():
-    data = load_students(DATA_PATH)
+def test_load_bitcoin_data_parses_dates_and_sorts():
+    data = load_bitcoin_data(DATA_PATH)
 
-    filtered = filter_students(
+    assert pd.api.types.is_datetime64_any_dtype(data["Date"])
+    assert data["Date"].is_monotonic_increasing
+
+
+def test_load_bitcoin_data_accepts_first_missing_daily_return():
+    data = load_bitcoin_data(DATA_PATH)
+
+    assert data["Daily_Return"].isna().sum() == 1
+    assert pd.isna(data.iloc[0]["Daily_Return"])
+
+
+def test_filter_bitcoin_data_applies_date_year_and_month():
+    data = load_bitcoin_data(DATA_PATH)
+
+    filtered = filter_bitcoin_data(
         data,
-        min_grade=90,
-        program="Datos",
-        pandas_level="Avanzado",
+        start_date=date(2020, 1, 1),
+        end_date=date(2021, 12, 31),
+        years=[2021],
+        months=[1, 2],
     )
 
-    assert list(filtered["programa"].unique()) == ["Datos"]
-    assert list(filtered["uso_pandas"].unique()) == ["Avanzado"]
-    assert filtered["calificacion"].min() >= 90
+    assert set(filtered["Year"].unique()) == {2021}
+    assert set(filtered["Month"].unique()).issubset({1, 2})
+    assert filtered["Date"].min() >= pd.Timestamp("2021-01-01")
+    assert filtered["Date"].max() <= pd.Timestamp("2021-02-28")
 
 
-def test_summarize_students_handles_empty_data():
-    data = load_students(DATA_PATH)
-    summary = summarize_students(data.iloc[0:0])
+def test_summarize_bitcoin_data_handles_empty_data():
+    data = load_bitcoin_data(DATA_PATH)
+    summary = summarize_bitcoin_data(data.iloc[0:0])
 
     assert summary == {
-        "students": 0,
-        "average_grade": 0,
-        "average_attendance": 0,
-        "at_risk": 0,
+        "days": 0,
+        "latest_close": 0,
+        "max_close": 0,
+        "average_return": 0,
+        "volatility": 0,
+        "total_volume": 0,
     }

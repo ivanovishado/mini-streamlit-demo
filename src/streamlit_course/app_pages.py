@@ -3,15 +3,15 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from .data_utils import filter_students, load_students, summarize_students
+from .data_utils import MONTH_NAMES, filter_bitcoin_data, load_bitcoin_data, summarize_bitcoin_data
 
 
-DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "estudiantes_ai.csv"
+DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "btc_diario_limpio.csv"
 
 
 @st.cache_data
-def get_students() -> pd.DataFrame:
-    return load_students(DATA_PATH)
+def get_bitcoin_data() -> pd.DataFrame:
+    return load_bitcoin_data(DATA_PATH)
 
 
 def apply_theme() -> None:
@@ -50,14 +50,14 @@ def apply_theme() -> None:
 
 def render_intro() -> None:
     apply_theme()
-    st.title("Streamlit: de script a web app")
-    st.caption("Mini-curso para estudiantes de ingenieria con enfoque en datos e IA.")
+    st.title("Streamlit: del notebook al dashboard")
+    st.caption("Mini-curso de 2 horas para convertir el análisis de Bitcoin de la Semana 3 en una app local.")
 
     st.markdown(
         """
         Streamlit permite convertir un script de Python en una interfaz web local en minutos.
-        La idea central de este curso es sencilla: si ya puedes analizar datos con Pandas,
-        puedes agregar controles visuales para que otra persona explore ese analisis.
+        En esta sesión tomaremos el dataset limpio de Bitcoin de la Semana 3 y lo convertiremos
+        en un dashboard con filtros, métricas, gráficas y descarga de datos.
         """
     )
 
@@ -71,33 +71,33 @@ def render_intro() -> None:
         unsafe_allow_html=True,
     )
 
-    st.subheader("Objetivo del capstone")
+    st.subheader("Objetivo del dashboard")
     st.write(
-        "Construir una app local donde el usuario filtre datos de estudiantes por "
-        "programa, nivel de Pandas y calificacion minima."
+        "Construir una app local donde el usuario explore el precio histórico de Bitcoin "
+        "por rango de fechas, año y mes."
     )
 
 
 def render_components() -> None:
     apply_theme()
-    st.title("Componentes UI")
-    st.write("Estos son los bloques basicos que usaremos para crear interactividad.")
+    st.title("Componentes de UI")
+    st.write("Estos son los bloques básicos que usaremos para crear interactividad.")
 
-    name = st.text_input("Nombre", "Equipo Streamlit")
-    min_grade = st.slider("Calificacion minima", 0, 100, 80)
-    program = st.selectbox("Programa", ["Computacion", "Datos", "Electronica", "Industrial"])
+    analyst = st.text_input("Analista", "Ivan")
+    min_price = st.slider("Precio mínimo de cierre (USD)", 0, 130000, 30000, step=1000)
+    year = st.selectbox("Año", list(range(2012, 2027)))
 
     if st.button("Generar mensaje"):
         st.success(
-            f"{name}: el filtro actual busca estudiantes de {program} "
-            f"con calificacion mayor o igual a {min_grade}."
+            f"{analyst}: el filtro actual busca días de {year} "
+            f"con precio de cierre mayor o igual a ${min_price:,.0f}."
         )
 
-    st.subheader("Codigo mental")
+    st.subheader("Código mental")
     st.code(
-        """min_grade = st.slider("Calificacion minima", 0, 100, 80)
-program = st.selectbox("Programa", programas)
-filtered = data[data["calificacion"] >= min_grade]""",
+        """min_price = st.slider(\"Precio mínimo de cierre\", 0, 130000, 30000)
+year = st.selectbox(\"Año\", sorted(data[\"Year\"].unique()))
+filtered = data[(data[\"Close\"] >= min_price) & (data[\"Year\"] == year)]""",
         language="python",
     )
 
@@ -105,34 +105,48 @@ filtered = data[data["calificacion"] >= min_grade]""",
 def render_filters() -> None:
     apply_theme()
     st.title("Interactividad con Pandas")
-    data = get_students()
+    data = get_bitcoin_data()
 
     st.write(
-        "Los widgets regresan valores normales de Python. Esos valores se conectan "
+        "Los widgets devuelven valores normales de Python. Esos valores se conectan "
         "directamente con filtros de Pandas."
     )
 
-    min_grade = st.slider("Calificacion minima", 0, 100, 80, key="filters_min_grade")
-    program = st.selectbox(
-        "Programa",
-        ["Todos", *sorted(data["programa"].unique())],
-        key="filters_program",
+    min_date = data["Date"].min().date()
+    max_date = data["Date"].max().date()
+    date_range = st.date_input(
+        "Rango de fechas",
+        value=(min_date, max_date),
+        min_value=min_date,
+        max_value=max_date,
+        key="filters_date_range",
     )
-    pandas_level = st.selectbox(
-        "Nivel de Pandas",
-        ["Todos", *sorted(data["uso_pandas"].unique())],
-        key="filters_pandas_level",
+    start_date, end_date = date_range if len(date_range) == 2 else (min_date, max_date)
+
+    years = st.multiselect(
+        "Años",
+        sorted(data["Year"].unique()),
+        default=[],
+        key="filters_years",
+    )
+    months = st.multiselect(
+        "Meses",
+        options=list(MONTH_NAMES.keys()),
+        format_func=lambda month: MONTH_NAMES[month],
+        default=[],
+        key="filters_months",
     )
 
-    filtered = filter_students(data, min_grade, program, pandas_level)
+    filtered = filter_bitcoin_data(data, start_date, end_date, years, months)
     st.dataframe(filtered, width="stretch")
 
     st.code(
-        """filtered = filter_students(
+        """filtered = filter_bitcoin_data(
     data,
-    min_grade=min_grade,
-    program=program,
-    pandas_level=pandas_level,
+    start_date=start_date,
+    end_date=end_date,
+    years=years,
+    months=months,
 )""",
         language="python",
     )
@@ -140,27 +154,58 @@ def render_filters() -> None:
 
 def render_capstone() -> None:
     apply_theme()
-    st.title("Capstone: dashboard local")
-    data = get_students()
+    st.title("Dashboard de Bitcoin")
+    data = get_bitcoin_data()
+
+    min_date = data["Date"].min().date()
+    max_date = data["Date"].max().date()
 
     with st.sidebar:
         st.header("Filtros")
-        min_grade = st.slider("Calificacion minima", 0, 100, 75)
-        program = st.selectbox("Programa", ["Todos", *sorted(data["programa"].unique())])
-        pandas_level = st.selectbox("Nivel de Pandas", ["Todos", *sorted(data["uso_pandas"].unique())])
+        date_range = st.date_input(
+            "Rango de fechas",
+            value=(min_date, max_date),
+            min_value=min_date,
+            max_value=max_date,
+        )
+        start_date, end_date = date_range if len(date_range) == 2 else (min_date, max_date)
+        years = st.multiselect("Años", sorted(data["Year"].unique()), default=[])
+        months = st.multiselect(
+            "Meses",
+            options=list(MONTH_NAMES.keys()),
+            format_func=lambda month: MONTH_NAMES[month],
+            default=[],
+        )
 
-    filtered = filter_students(data, min_grade, program, pandas_level)
-    summary = summarize_students(filtered)
+    filtered = filter_bitcoin_data(data, start_date, end_date, years, months)
+    summary = summarize_bitcoin_data(filtered)
 
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Estudiantes", summary["students"])
-    col2.metric("Promedio", summary["average_grade"])
-    col3.metric("Asistencia", f"{summary['average_attendance']}%")
-    col4.metric("En riesgo", summary["at_risk"])
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Días", f"{summary['days']:,}")
+    col2.metric("Último cierre", f"${summary['latest_close']:,.2f}")
+    col3.metric("Máximo cierre", f"${summary['max_close']:,.2f}")
 
-    st.subheader("Distribucion por proyecto")
-    project_counts = filtered["proyecto_ai"].value_counts()
-    st.bar_chart(project_counts)
+    col4, col5, col6 = st.columns(3)
+    col4.metric("Retorno diario promedio", f"{summary['average_return']:.3f}%")
+    col5.metric("Volatilidad", f"{summary['volatility']:.3f}%")
+    col6.metric("Volumen total", f"{summary['total_volume']:,.0f} BTC")
+
+    st.subheader("Precio de cierre")
+    if filtered.empty:
+        st.info("No hay datos para los filtros seleccionados.")
+    else:
+        st.line_chart(filtered.set_index("Date")["Close"])
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.subheader("Cierre promedio por año")
+        yearly_close = filtered.groupby("Year")["Close"].mean() if not filtered.empty else pd.Series(dtype=float)
+        st.bar_chart(yearly_close)
+
+    with col_b:
+        st.subheader("Retorno promedio por mes")
+        monthly_return = filtered.groupby("Month_Name")["Daily_Return"].mean() if not filtered.empty else pd.Series(dtype=float)
+        st.bar_chart(monthly_return)
 
     st.subheader("Datos filtrados")
     st.dataframe(filtered, width="stretch")
@@ -169,37 +214,23 @@ def render_capstone() -> None:
     st.download_button(
         "Descargar datos filtrados",
         data=csv,
-        file_name="estudiantes_filtrados.csv",
+        file_name="bitcoin_filtrado.csv",
         mime="text/csv",
     )
 
 
-def render_bonus_ai() -> None:
+def render_deployment() -> None:
     apply_theme()
-    st.title("Bonus: donde entra IA")
+    st.title("Vista previa del despliegue")
     st.write(
-        "Esta pagina no requiere API keys. Sirve para discutir como una app Streamlit "
-        "puede envolver un flujo de IA despues de dominar datos, widgets y estado."
+        "Cuando la app funciona localmente, el siguiente paso es publicarla desde un repositorio "
+        "con sus dependencias y datos preparados."
     )
-
-    question = st.text_area(
-        "Pregunta que un usuario podria hacerle a un asistente de analisis",
-        "Que patrones ves en estudiantes en riesgo?",
-    )
-
-    if st.button("Simular respuesta"):
-        st.info(
-            "Respuesta simulada: revisaria asistencia, horas de estudio y nivel de Pandas "
-            "para explicar el riesgo y proponer una accion concreta."
-        )
-
     st.markdown(
         """
-        Para convertir esto en una app real de IA, se agregaria:
-
-        - Un proveedor de modelo.
-        - Manejo seguro de secretos.
-        - Validacion de entradas.
-        - Observabilidad de costos y errores.
+        - Sube el proyecto a GitHub.
+        - Mantén `requirements.txt` actualizado.
+        - Evita depender del CSV crudo de millones de filas si ya tienes `btc_diario_limpio.csv`.
+        - En Streamlit Community Cloud, selecciona el archivo `streamlit_app.py`.
         """
     )

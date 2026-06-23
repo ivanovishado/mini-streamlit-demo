@@ -1,26 +1,31 @@
 import type { DesignSystem, Page, SlideMeta, SlideTransition } from '@open-slide/core';
-import { useSlidePageNumber } from '@open-slide/core';
+import { ImagePlaceholder, useSlidePageNumber } from '@open-slide/core';
+import repo from './assets/repo.png';
 
 export const design: DesignSystem = {
-  palette: { bg: '#202945', text: '#ffffff', accent: '#FDCF85' },
+  palette: { bg: '#0e1116', text: '#f5f7fa', accent: '#f7931a' },
   fonts: {
     display: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     body: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   },
-  typeScale: { hero: 152, body: 36 },
-  radius: 8,
+  typeScale: { hero: 160, body: 36 },
+  radius: 10,
 };
 
-const muted = '#d8dee9';
-const panel = '#17213a';
+const muted = '#8b95a7';
+const panel = '#161b22';
+const panelLine = '#21262d';
+const bitcoin = '#f7931a';
+const up = '#0f9d58';
+const down = '#ea4335';
 const crestRed = '#B12028';
 const olive = '#8F993E';
-const gray = '#404041';
-const ink = '#000000';
 const gdgBlue = '#4285f4';
 const gdgGreen = '#0f9d58';
 const gdgYellow = '#fbbc04';
 const gdgRed = '#ea4335';
+const ink = '#000000';
+const mono = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace';
 
 const EASE_OUT = 'cubic-bezier(0, 0, 0.2, 1)';
 const EASE_IN = 'cubic-bezier(0.4, 0, 1, 1)';
@@ -34,14 +39,57 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       from { opacity: 0; transform: translateY(18px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .osd-fade-up { animation: osd-fade-up 500ms cubic-bezier(0, 0, 0.2, 1) both; }
+    @keyframes osd-type {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    @keyframes osd-stream {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes osd-blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    @keyframes osd-draw {
+      from { stroke-dashoffset: 6000; }
+      to { stroke-dashoffset: 0; }
+    }
+    .osd-fade-up { animation: osd-fade-up 520ms cubic-bezier(0, 0, 0.2, 1) both; }
+    .osd-type {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      width: 0;
+      animation: osd-type 1.5s steps(40, end) both;
+    }
+    .osd-stream {
+      opacity: 0;
+      animation: osd-stream 420ms cubic-bezier(0, 0, 0.2, 1) both;
+    }
+    .osd-caret::after {
+      content: '';
+      display: inline-block;
+      width: 0.08em;
+      height: 0.9em;
+      background: currentColor;
+      margin-left: 0.12em;
+      vertical-align: -0.08em;
+      animation: osd-blink 1s steps(1) infinite;
+    }
+    .osd-draw {
+      stroke-dasharray: 6000;
+      stroke-dashoffset: 6000;
+      animation: osd-draw 2.6s cubic-bezier(0, 0, 0.2, 1) forwards;
+    }
     .osd-code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-family: ${mono};
       background: ${panel};
-      color: var(--osd-accent);
-      padding: 4px 12px;
+      color: ${bitcoin};
+      padding: 3px 11px;
       border-radius: 6px;
-      font-size: 0.9em;
+      font-size: 0.88em;
+      border: 1px solid ${panelLine};
     }
   `;
   document.head.appendChild(style);
@@ -54,7 +102,7 @@ const Title = ({ children }: { children: React.ReactNode }) => (
       fontSize: 'var(--osd-size-hero)',
       fontWeight: 900,
       lineHeight: 1.02,
-      letterSpacing: 0,
+      letterSpacing: -0.01,
       margin: 0,
       maxWidth: 1320,
       color: 'var(--osd-text)',
@@ -72,12 +120,12 @@ const Footer = () => {
         position: 'absolute',
         left: 112,
         right: 112,
-        bottom: 54,
+        bottom: 50,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         fontFamily: 'var(--osd-font-body)',
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: 700,
         letterSpacing: 1.6,
         color: muted,
@@ -99,24 +147,24 @@ const Eyebrow = ({ children }: { children: React.ReactNode }) => (
       alignItems: 'center',
       gap: 14,
       fontFamily: 'var(--osd-font-body)',
-      fontSize: 24,
+      fontSize: 22,
       fontWeight: 800,
-      letterSpacing: 3.6,
+      letterSpacing: 3.4,
       color: 'var(--osd-accent)',
       textTransform: 'uppercase',
     }}
   >
-    <span style={{ width: 72, height: 8, background: gdgBlue, borderRadius: 999 }} />
+    <span style={{ width: 64, height: 7, background: gdgBlue, borderRadius: 999 }} />
     <span>{children}</span>
   </div>
 );
 
 const ColorRail = () => (
-  <div style={{ display: 'flex', gap: 16 }}>
-    <span style={{ width: 86, height: 12, background: gdgBlue, borderRadius: 999 }} />
-    <span style={{ width: 86, height: 12, background: gdgRed, borderRadius: 999 }} />
-    <span style={{ width: 86, height: 12, background: gdgYellow, borderRadius: 999 }} />
-    <span style={{ width: 86, height: 12, background: gdgGreen, borderRadius: 999 }} />
+  <div style={{ display: 'flex', gap: 10 }}>
+    <span style={{ width: 56, height: 8, background: gdgBlue, borderRadius: 999 }} />
+    <span style={{ width: 56, height: 8, background: gdgRed, borderRadius: 999 }} />
+    <span style={{ width: 56, height: 8, background: gdgYellow, borderRadius: 999 }} />
+    <span style={{ width: 56, height: 8, background: gdgGreen, borderRadius: 999 }} />
   </div>
 );
 
@@ -132,57 +180,48 @@ const Frame = ({ children }: { children: React.ReactNode }) => (
       fontFamily: 'var(--osd-font-body)',
     }}
   >
-    <div style={{ position: 'absolute', left: 112, right: 112, top: 72, height: 4, background: 'var(--osd-accent)' }} />
-    <div style={{ position: 'absolute', left: 112, top: 92 }}>
+    <div style={{ position: 'absolute', left: 112, right: 112, top: 60, height: 3, background: 'var(--osd-accent)', opacity: 0.9 }} />
+    <div style={{ position: 'absolute', right: 112, top: 78 }}>
       <ColorRail />
     </div>
-    <div
-      style={{
-        position: 'absolute',
-        right: -160,
-        bottom: -240,
-        width: 620,
-        height: 620,
-        border: '34px solid var(--osd-accent)',
-        borderRadius: 999,
-        opacity: 0.18,
-      }}
-    />
+    <div style={{ position: 'absolute', left: 112, bottom: 100, width: 320, height: 10, background: crestRed }} />
     {children}
     <Footer />
   </section>
 );
 
-const ContentBlock = ({ children }: { children: React.ReactNode }) => (
-  <div className="osd-fade-up" style={{ position: 'absolute', inset: '176px 112px 132px' }}>
+const ContentBlock = ({ children, top = 150 }: { children: React.ReactNode; top?: number }) => (
+  <div className="osd-fade-up" style={{ position: 'absolute', left: 112, right: 112, top, bottom: 130 }}>
     {children}
   </div>
 );
 
-const PageHeading = ({ children }: { children: React.ReactNode }) => (
+const PageHeading = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
   <h2
     style={{
       fontFamily: 'var(--osd-font-display)',
-      fontSize: 76,
-      lineHeight: 1.08,
-      margin: '24px 0 40px',
+      fontSize: 70,
+      lineHeight: 1.1,
+      margin: '18px 0 36px',
       color: 'var(--osd-text)',
       maxWidth: 1320,
+      ...style,
     }}
   >
     {children}
   </h2>
 );
 
-const BodyList = ({ children }: { children: React.ReactNode }) => (
+const BodyList = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
   <ul
     style={{
       fontSize: 'var(--osd-size-body)',
-      lineHeight: 1.55,
+      lineHeight: 1.5,
       color: muted,
       margin: 0,
-      paddingLeft: 48,
+      paddingLeft: 44,
       maxWidth: 1100,
+      ...style,
     }}
   >
     {children}
@@ -193,7 +232,7 @@ const BodyText = ({ children, style }: { children: React.ReactNode; style?: Reac
   <p
     style={{
       fontSize: 'var(--osd-size-body)',
-      lineHeight: 1.55,
+      lineHeight: 1.5,
       color: muted,
       margin: 0,
       maxWidth: 980,
@@ -206,188 +245,330 @@ const BodyText = ({ children, style }: { children: React.ReactNode; style?: Reac
 
 const Code = ({ children }: { children: React.ReactNode }) => <span className="osd-code">{children}</span>;
 
+const TrafficLights = () => (
+  <div style={{ display: 'flex', gap: 9 }}>
+    {['#ff5f56', '#ffbd2e', '#27c93f'].map((color) => (
+      <span
+        key={color}
+        style={{
+          width: 13,
+          height: 13,
+          borderRadius: '50%',
+          background: color,
+          boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.25)',
+        }}
+      />
+    ))}
+  </div>
+);
+
+const WindowShell = ({
+  title,
+  badge,
+  children,
+  style,
+}: {
+  title: string;
+  badge?: React.ReactNode;
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}) => (
+  <div
+    style={{
+      background: '#0b0f14',
+      border: `1px solid ${panelLine}`,
+      borderRadius: 'var(--osd-radius)',
+      boxShadow: '0 40px 80px -36px rgba(0,0,0,0.7)',
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+      ...style,
+    }}
+  >
+    <div
+      style={{
+        height: 48,
+        padding: '0 18px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 14,
+        background: '#090d12',
+        borderBottom: `1px solid ${panelLine}`,
+        flexShrink: 0,
+      }}
+    >
+      <TrafficLights />
+      <div
+        style={{
+          flex: 1,
+          textAlign: 'center',
+          fontFamily: mono,
+          fontSize: 18,
+          color: '#6b7689',
+          letterSpacing: '0.02em',
+        }}
+      >
+        {title}
+      </div>
+      <div style={{ minWidth: 40, display: 'flex', justifyContent: 'flex-end' }}>{badge}</div>
+    </div>
+    {children}
+  </div>
+);
+
+const CodePane = ({
+  children,
+  fontSize = 30,
+  style,
+}: {
+  children: React.ReactNode;
+  fontSize?: number;
+  style?: React.CSSProperties;
+}) => (
+  <div
+    style={{
+      padding: '30px 40px',
+      fontFamily: mono,
+      fontSize,
+      lineHeight: 1.6,
+      color: 'var(--osd-text)',
+      ...style,
+    }}
+  >
+    {children}
+  </div>
+);
+
 const CheckItem = ({ children }: { children: React.ReactNode }) => (
-  <li style={{ marginBottom: 28, display: 'flex', alignItems: 'flex-start', gap: 18 }}>
-    <span style={{ color: 'var(--osd-accent)', fontWeight: 800 }}>✓</span>
+  <li style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+    <span style={{ color: 'var(--osd-accent)', fontWeight: 800, fontSize: 30, lineHeight: 1.2 }}>✓</span>
     <span>{children}</span>
   </li>
 );
 
-const NumberedStep = ({ number, children }: { number: number; children: React.ReactNode }) => (
-  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24, marginBottom: 28 }}>
-    <span
+const PriceTrace = ({
+  width,
+  height,
+  stroke = bitcoin,
+  strokeWidth = 3,
+  fillOpacity = 0.14,
+  animate = true,
+}: {
+  width: number;
+  height: number;
+  stroke?: string;
+  strokeWidth?: number;
+  fillOpacity?: number;
+  animate?: boolean;
+}) => {
+  const series = [
+    4, 5, 7, 12, 8, 15, 22, 30, 28, 40, 55, 48, 70, 95, 120, 180, 160, 210, 300, 420, 380, 520,
+    680, 900, 1100, 950, 1400, 1800, 1600, 2200, 3100, 4200, 3800, 5200, 6400, 5800, 7200, 8900,
+    9600, 11200, 13800, 12400, 15800, 19200, 16800, 24000, 31000, 29000, 42000, 58000, 64000,
+    48000, 43000, 52000, 61000, 57000, 69000, 71000, 64000, 68000, 72000,
+  ];
+  const min = Math.min(...series);
+  const max = Math.max(...series);
+  const range = max - min || 1;
+  const stepX = width / (series.length - 1);
+  const pts = series.map((v, i) => {
+    const x = i * stepX;
+    const y = height - ((v - min) / range) * height;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const linePath = `M${pts.join(' L')}`;
+  const areaPath = `${linePath} L${width},${height} L0,${height} Z`;
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" style={{ display: 'block' }}>
+      <path d={areaPath} fill={stroke} fillOpacity={fillOpacity} />
+      <path
+        d={linePath}
+        fill="none"
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        className={animate ? 'osd-draw' : undefined}
+      />
+    </svg>
+  );
+};
+
+const BtcRing = ({ size = 460 }: { size?: number }) => (
+  <div
+    style={{
+      width: size,
+      height: size,
+      borderRadius: '50%',
+      border: `22px solid ${bitcoin}`,
+      opacity: 0.22,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <div
       style={{
+        width: size * 0.7,
+        height: size * 0.7,
+        borderRadius: '50%',
+        background: panel,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: 52,
-        height: 52,
-        borderRadius: '50%',
-        background: 'var(--osd-accent)',
-        color: ink,
-        fontSize: 28,
-        fontWeight: 900,
-        flexShrink: 0,
+        fontFamily: mono,
+        fontSize: size * 0.22,
+        color: bitcoin,
+        fontWeight: 800,
       }}
     >
-      {number}
-    </span>
-    <div style={{ fontSize: 'var(--osd-size-body)', lineHeight: 1.55, color: muted, paddingTop: 6 }}>{children}</div>
-  </div>
-);
-
-const FlowCard = ({ label, desc }: { label: string; desc: string }) => (
-  <div
-    style={{
-      background: panel,
-      borderTop: '6px solid var(--osd-accent)',
-      borderRadius: 'var(--osd-radius)',
-      padding: 36,
-    }}
-  >
-    <div style={{ fontSize: 40, fontWeight: 900, color: 'var(--osd-accent)', marginBottom: 16 }}>{label}</div>
-    <div style={{ fontSize: 30, lineHeight: 1.45, color: muted }}>{desc}</div>
-  </div>
-);
-
-const DatasetField = ({ col, q }: { col: string; q: string }) => (
-  <div
-    style={{
-      background: panel,
-      borderLeft: '8px solid ' + gdgBlue,
-      borderRadius: 'var(--osd-radius)',
-      padding: '28px 32px',
-    }}
-  >
-    <Code>{col}</Code>
-    <div style={{ fontSize: 30, color: muted, marginTop: 12 }}>{q}</div>
-  </div>
-);
-
-const ShowCard = ({ fn, desc }: { fn: string; desc: string }) => (
-  <div
-    style={{
-      background: panel,
-      borderTop: '6px solid var(--osd-accent)',
-      borderRadius: 'var(--osd-radius)',
-      padding: 36,
-    }}
-  >
-    <Code>{fn}</Code>
-    <div style={{ fontSize: 30, lineHeight: 1.45, color: muted, marginTop: 16 }}>{desc}</div>
+      ₿
+    </div>
   </div>
 );
 
 const Cover: Page = () => (
   <Frame>
-    <div className="osd-fade-up" style={{ position: 'absolute', left: 112, top: 226, width: 1240 }}>
-      <Eyebrow>Taller UdeG x GDG</Eyebrow>
+    <div className="osd-fade-up" style={{ position: 'absolute', left: 112, top: 210, width: 1180 }}>
+      <Eyebrow>Taller UdeG x GDG · 2h code-along</Eyebrow>
       <Title>Streamlit</Title>
-      <p
-        style={{
-          fontSize: 52,
-          lineHeight: 1.25,
-          color: muted,
-          maxWidth: 1100,
-          margin: '34px 0 0',
-        }}
-      >
-        De análisis de datos a web app local
+      <p style={{ fontSize: 56, lineHeight: 1.2, color: 'var(--osd-text)', maxWidth: 1080, margin: '28px 0 0', fontWeight: 500 }}>
+        De notebook a dashboard de Bitcoin
       </p>
-      <p style={{ fontSize: 28, color: muted, marginTop: 48, maxWidth: 900 }}>
-        4 horas · 2 días · Cada estudiante construye su propio dashboard interactivo
+      <p style={{ fontSize: 30, color: muted, marginTop: 40, maxWidth: 900, letterSpacing: 0.4 }}>
+        De <Code>streamlit run streamlit_app.py</Code> a un dashboard local filtrable en 2 horas.
       </p>
     </div>
-    <div style={{ position: 'absolute', right: 112, top: 260 }}>
-      <div
-        style={{
-          width: 520,
-          height: 520,
-          borderRadius: '50%',
-          border: '24px solid var(--osd-accent)',
-          opacity: 0.22,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+    <div style={{ position: 'absolute', right: 96, top: 230, width: 660, height: 360 }}>
+      <PriceTrace width={660} height={360} strokeWidth={4} />
+      <div style={{ position: 'absolute', right: -40, top: -70 }}>
+        <BtcRing size={300} />
+      </div>
+    </div>
+  </Frame>
+);
+
+const Presenter: Page = () => (
+  <Frame>
+    <ContentBlock top={170}>
+      <Eyebrow>Presenta</Eyebrow>
+      <div style={{ display: 'grid', gridTemplateColumns: '440px 1fr', gap: 80, marginTop: 28, alignItems: 'center' }}>
         <div
           style={{
-            width: 360,
-            height: 360,
-            borderRadius: '50%',
+            width: 440,
+            height: 440,
+            borderRadius: 'var(--osd-radius)',
+            border: `2px solid ${panelLine}`,
             background: panel,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: 'ui-monospace, monospace',
-            fontSize: 96,
-            color: 'var(--osd-accent)',
-            fontWeight: 800,
+            overflow: 'hidden',
           }}
         >
-          {'<> '}
+          <ImagePlaceholder hint="Foto de Iván Galaviz" width={430} height={430} />
+        </div>
+        <div>
+          <h2 style={{ fontFamily: 'var(--osd-font-display)', fontSize: 92, lineHeight: 1.05, margin: 0, color: 'var(--osd-text)', fontWeight: 900 }}>Ivan Galaviz</h2>
+          <div style={{ fontSize: 38, color: 'var(--osd-accent)', fontWeight: 800, marginTop: 24, letterSpacing: 0.3 }}>
+            Software Engineer at Netflix
+          </div>
+          <div style={{ fontSize: 32, color: muted, marginTop: 18, lineHeight: 1.4 }}>
+            Ing. en Computación por la UdeG — CUCEI
+          </div>
+          <div style={{ display: 'flex', gap: 12, marginTop: 40 }}>
+            <span style={{ height: 10, width: 120, background: crestRed, borderRadius: 999 }} />
+            <span style={{ height: 10, width: 120, background: bitcoin, borderRadius: 999 }} />
+            <span style={{ height: 10, width: 120, background: gdgBlue, borderRadius: 999 }} />
+          </div>
         </div>
       </div>
-    </div>
-    <div style={{ position: 'absolute', left: 112, bottom: 154, width: 420, height: 18, background: crestRed }} />
-  </Frame>
-);
-
-const PromisePage: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>El objetivo del taller</Eyebrow>
-      <PageHeading>Al finalizar, cada uno de ustedes tendrá un dashboard local filtrable</PageHeading>
-      <BodyList>
-        <li style={{ marginBottom: 28 }}>
-          Construirás una app funcional en <Code>localhost</Code> desde cero.
-        </li>
-        <li style={{ marginBottom: 28 }}>
-          Conectarás controles a tu dataset <Code>data/estudiantes_ai.csv</Code>.
-        </li>
-        <li>Serás capaz de explicar tu app en 60 segundos.</li>
-      </BodyList>
     </ContentBlock>
   </Frame>
 );
 
-const TwoDayMap: Page = () => (
+const NotebookVsApp: Page = () => (
   <Frame>
     <ContentBlock>
-      <Eyebrow>Mapa de dos días</Eyebrow>
-      <PageHeading>Día 1 construye la UI; Día 2 conecta los datos</PageHeading>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, marginTop: 8 }}>
-        <div
-          style={{
-            background: panel,
-            border: '4px solid var(--osd-accent)',
-            borderRadius: 'var(--osd-radius)',
-            padding: 44,
-          }}
-        >
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--osd-accent)', marginBottom: 24 }}>DÍA 1</div>
-          <ul style={{ fontSize: 32, lineHeight: 1.5, color: muted, margin: 0, paddingLeft: 32 }}>
-            <li style={{ marginBottom: 16 }}>Setup del entorno</li>
-            <li style={{ marginBottom: 16 }}>Modelo mental de Streamlit</li>
-            <li>Widgets como variables</li>
-          </ul>
-        </div>
-        <div
-          style={{
-            background: panel,
-            border: '4px solid ' + gdgBlue,
-            borderRadius: 'var(--osd-radius)',
-            padding: 44,
-          }}
-        >
-          <div style={{ fontSize: 28, fontWeight: 800, color: gdgBlue, marginBottom: 24 }}>DÍA 2</div>
-          <ul style={{ fontSize: 32, lineHeight: 1.5, color: muted, margin: 0, paddingLeft: 32 }}>
-            <li style={{ marginBottom: 16 }}>Filtros con Pandas</li>
-            <li style={{ marginBottom: 16 }}>Dashboard completo</li>
-            <li>Vista previa de despliegue</li>
-          </ul>
-        </div>
+      <Eyebrow>Por qué apps locales</Eyebrow>
+      <PageHeading>Hoy usamos <Code>streamlit run</Code>, no notebooks</PageHeading>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginTop: 4 }}>
+        <WindowShell title="notebook.ipynb" style={{ minHeight: 460 }}>
+          <div style={{ padding: '28px 36px', fontSize: 27, lineHeight: 1.6, color: muted }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
+              <span style={{ width: 28, height: 28, borderRadius: 6, background: gdgYellow, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: ink, fontWeight: 900, fontSize: 16 }}>In</span>
+              <span style={{ color: 'var(--osd-text)', fontFamily: mono, fontSize: 22 }}>[1]</span>
+            </div>
+            <div style={{ fontFamily: mono, fontSize: 24, color: 'var(--osd-text)', background: '#090d12', border: `1px solid ${panelLine}`, borderRadius: 6, padding: '18px 22px' }}>
+              import streamlit as st<br />
+              <span style={{ color: muted }}># renderiza una app Streamlit</span><br />
+              <span style={{ color: bitcoin }}>from</span> streamlit_jupyter <span style={{ color: bitcoin }}>import</span> st
+            </div>
+            <p style={{ fontSize: 24, color: muted, marginTop: 22, lineHeight: 1.5 }}>
+              <Code>streamlit-jupyter</Code> permite renderizar apps Streamlit dentro de un notebook.
+            </p>
+          </div>
+        </WindowShell>
+        <WindowShell title="~/streamlit-workshop — zsh" style={{ minHeight: 460 }}>
+          <div style={{ padding: '28px 36px', fontFamily: mono, fontSize: 26, lineHeight: 1.7, color: muted }}>
+            <div style={{ display: 'flex', gap: 14 }}>
+              <span style={{ color: gdgGreen }}>$</span>
+              <span style={{ color: 'var(--osd-text)' }}>streamlit run streamlit_app.py</span>
+            </div>
+            <div style={{ color: 'var(--osd-text)', marginTop: 10 }}>
+              <span style={{ color: bitcoin }}>  Local URL: </span>http://localhost:8501
+            </div>
+            <div style={{ color: 'var(--osd-text)' }}>
+              <span style={{ color: bitcoin }}>  Network URL: </span>http://192.168.0.21:8501
+            </div>
+            <p style={{ fontFamily: 'var(--osd-font-body)', fontSize: 24, color: muted, marginTop: 26, lineHeight: 1.5 }}>
+              El flujo normal de Streamlit: un archivo Python y un servidor local.
+            </p>
+          </div>
+        </WindowShell>
+      </div>
+    </ContentBlock>
+  </Frame>
+);
+
+const TimelineSegment = ({
+  start,
+  end,
+  label,
+  color,
+  width,
+}: {
+  start: string;
+  end: string;
+  label: string;
+  color: string;
+  width: number;
+}) => (
+  <div style={{ width, flexShrink: 0 }}>
+    <div style={{ height: 56, background: color, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: ink, fontWeight: 900, fontSize: 22, letterSpacing: 0.5 }}>
+      {start}–{end}
+    </div>
+    <div style={{ fontSize: 22, color: muted, marginTop: 14, lineHeight: 1.35, fontWeight: 600 }}>{label}</div>
+  </div>
+);
+
+const SessionMap: Page = () => (
+  <Frame>
+    <ContentBlock>
+      <Eyebrow>Mapa de la sesión</Eyebrow>
+      <PageHeading>2 horas, de script a dashboard</PageHeading>
+      <div style={{ display: 'flex', gap: 16, marginTop: 16 }}>
+        <TimelineSegment start="0:00" end="0:10" label="Intro, setup y objetivo" color={gdgBlue} width={250} />
+        <TimelineSegment start="0:10" end="0:35" label="Modelo mental + UI" color={gdgGreen} width={250} />
+        <TimelineSegment start="0:35" end="1:05" label="Widgets → Pandas" color={gdgYellow} width={250} />
+        <TimelineSegment start="1:05" end="1:40" label="Dashboard Bitcoin" color={bitcoin} width={250} />
+      </div>
+      <div style={{ display: 'flex', gap: 16, marginTop: 36 }}>
+        <TimelineSegment start="1:40" end="1:55" label="Despliegue preview" color={gdgRed} width={516} />
+        <TimelineSegment start="1:55" end="2:00" label="Cierre y preguntas" color={crestRed} width={250} />
+      </div>
+      <div style={{ marginTop: 40, fontSize: 26, color: muted, maxWidth: 1200 }}>
+        Cada bloque se acompaña de la app en vivo: <Code>http://localhost:8501</Code>
       </div>
     </ContentBlock>
   </Frame>
@@ -398,17 +579,36 @@ const Setup: Page = () => (
     <ContentBlock>
       <Eyebrow>Setup</Eyebrow>
       <PageHeading>Antes de empezar</PageHeading>
-      <div style={{ maxWidth: 1100 }}>
-        <NumberedStep number={1}>
-          Activa tu entorno virtual: <Code>source venv/bin/activate</Code>
-        </NumberedStep>
-        <NumberedStep number={2}>
-          Instala dependencias: <Code>pip install -r requirements.txt</Code>
-        </NumberedStep>
-        <NumberedStep number={3}>
-          Lanza la app: <Code>streamlit run streamlit_app.py</Code>
-        </NumberedStep>
-      </div>
+      <WindowShell title="~/streamlit-workshop — zsh" style={{ width: 1180 }}>
+        <div style={{ padding: '32px 44px', fontFamily: mono, fontSize: 28, lineHeight: 1.7, color: muted }}>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <span style={{ color: gdgGreen }}>$</span>
+            <span className="osd-type" style={{ color: 'var(--osd-text)' }}>
+              source venv/bin/activate
+            </span>
+          </div>
+          {[
+            ['✓', 'Entorno virtual activo'],
+            ['$', 'pip install -r requirements.txt'],
+            ['✓', 'Dependencias instaladas'],
+            ['$', 'streamlit run streamlit_app.py'],
+            ['✓', 'App en http://localhost:8501'],
+          ].map(([prefix, text], index) => (
+            <div
+              key={text}
+              className="osd-stream"
+              style={{ display: 'flex', gap: 16, animationDelay: `${1.6 + index * 0.16}s` }}
+            >
+              <span style={{ color: prefix === '$' ? gdgGreen : bitcoin }}>{prefix}</span>
+              <span style={{ color: prefix === '$' ? muted : 'var(--osd-text)' }}>{text}</span>
+            </div>
+          ))}
+          <div className="osd-stream" style={{ display: 'flex', gap: 16, animationDelay: '2.6s' }}>
+            <span style={{ color: gdgGreen }}>$</span>
+            <span className="osd-caret" style={{ color: 'var(--osd-text)' }} />
+          </div>
+        </div>
+      </WindowShell>
     </ContentBlock>
   </Frame>
 );
@@ -417,80 +617,138 @@ const WhatIsStreamlit: Page = () => (
   <Frame>
     <ContentBlock>
       <Eyebrow>Concepto</Eyebrow>
-      <PageHeading>¿Qué es Streamlit?</PageHeading>
-      <BodyList>
-        <li style={{ marginBottom: 28 }}>
-          Un script de Python que se convierte en lienzo de app web.
-        </li>
-        <li style={{ marginBottom: 28 }}>
-          Cada línea se renderiza de arriba hacia abajo en el navegador.
-        </li>
-        <li>No necesitas HTML, CSS ni JavaScript para empezar.</li>
-      </BodyList>
+      <PageHeading>Un script de Python que se vuelve una app web</PageHeading>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 56, marginTop: 4, alignItems: 'stretch' }}>
+        <WindowShell title="streamlit_app.py" style={{ minHeight: 420 }}>
+          <CodePane fontSize={28}>
+            <span style={{ color: bitcoin }}>import</span> streamlit <span style={{ color: bitcoin }}>as</span> st
+            <br />
+            <br />
+            st.title(<span style={{ color: gdgGreen }}>"Dashboard de Bitcoin"</span>)
+            <br />
+            st.write(<span style={{ color: gdgGreen }}>"Precio histórico"</span>)
+          </CodePane>
+        </WindowShell>
+        <div
+          style={{
+            background: panel,
+            border: `1px solid ${panelLine}`,
+            borderRadius: 'var(--osd-radius)',
+            minHeight: 420,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+          }}
+        >
+          <div style={{ height: 44, background: '#090d12', borderBottom: `1px solid ${panelLine}`, display: 'flex', alignItems: 'center', padding: '0 18px', gap: 10 }}>
+            <span style={{ width: 12, height: 12, borderRadius: '50%', background: gdgBlue }} />
+            <span style={{ width: 12, height: 12, borderRadius: '50%', background: gdgYellow }} />
+            <span style={{ width: 12, height: 12, borderRadius: '50%', background: gdgGreen }} />
+            <span style={{ marginLeft: 14, fontFamily: mono, fontSize: 18, color: muted }}>localhost:8501</span>
+          </div>
+          <div style={{ padding: '28px 34px', color: 'var(--osd-text)' }}>
+            <div style={{ fontSize: 34, fontWeight: 900, lineHeight: 1.2 }}>Dashboard de Bitcoin</div>
+            <div style={{ fontSize: 24, color: muted, marginTop: 14 }}>Precio histórico</div>
+            <div style={{ marginTop: 32, height: 200, width: '100%' }}>
+              <PriceTrace width={460} height={200} strokeWidth={3} animate={false} />
+            </div>
+          </div>
+        </div>
+      </div>
     </ContentBlock>
   </Frame>
+);
+
+const RerunNode = ({ label, desc, color }: { label: string; desc: string; color: string }) => (
+  <div
+    style={{
+      background: panel,
+      border: `1px solid ${panelLine}`,
+      borderLeft: `8px solid ${color}`,
+      borderRadius: 'var(--osd-radius)',
+      padding: '24px 30px',
+      width: 620,
+    }}
+  >
+    <div style={{ fontSize: 34, fontWeight: 800, color: 'var(--osd-text)' }}>{label}</div>
+    <div style={{ fontSize: 26, color: muted, marginTop: 8, lineHeight: 1.4 }}>{desc}</div>
+  </div>
 );
 
 const MentalModel: Page = () => (
   <Frame>
     <ContentBlock>
       <Eyebrow>Modelo mental</Eyebrow>
-      <PageHeading>El script se actualiza completo</PageHeading>
-      <BodyList>
-        <li style={{ marginBottom: 28 }}>
-          Streamlit ejecuta el archivo de arriba hacia abajo.
-        </li>
-        <li style={{ marginBottom: 28 }}>
-          Cada cambio de código o interacción dispara un nuevo rerun.
-        </li>
-        <li>Los widgets son variables Python: su valor cambia y el resto del script responde.</li>
-      </BodyList>
-    </ContentBlock>
-  </Frame>
-);
-
-const FirstAppCheckpoint: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>Checkpoint</Eyebrow>
-      <PageHeading>Tu primera app</PageHeading>
-      <BodyText>Abre <Code>exercises/day1/01_first_app.py</Code> y completa el objetivo:</BodyText>
-      <div
-        style={{
-          background: panel,
-          border: '4px solid var(--osd-accent)',
-          borderRadius: 'var(--osd-radius)',
-          padding: 36,
-          marginTop: 36,
-          maxWidth: 1100,
-        }}
-      >
-        <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--osd-accent)', marginBottom: 16 }}>META</div>
-        <div style={{ fontSize: 32, lineHeight: 1.5, color: 'var(--osd-text)' }}>
-          Escribir <Code>st.title("Mi primera app")</Code> y mostrar un texto con <Code>st.write</Code>.
+      <PageHeading>El script se re-ejecuta de arriba hacia abajo</PageHeading>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 90px', gap: 24, alignItems: 'start', marginTop: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 26 }}>
+          <RerunNode label="1 · Cambia un widget" desc="El usuario mueve un slider o elige un año." color={gdgBlue} />
+          <div style={{ color: bitcoin, fontSize: 30, marginLeft: 280, fontWeight: 900 }}>↓</div>
+          <RerunNode label="2 · Streamlit re-ejecuta el script" desc="Todo el archivo se ejecuta otra vez, de arriba a abajo." color={bitcoin} />
+          <div style={{ color: bitcoin, fontSize: 30, marginLeft: 280, fontWeight: 900 }}>↓</div>
+          <RerunNode label="3 · La UI se redibuja" desc="Cada st.* refleja los nuevos valores al instante." color={gdgGreen} />
+        </div>
+        <div
+          style={{
+            marginTop: 8,
+            height: 520,
+            borderLeft: `3px dashed ${panelLine}`,
+            position: 'relative',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              left: -28,
+              top: 250,
+              color: crestRed,
+              fontSize: 40,
+              fontWeight: 900,
+              transform: 'rotate(180deg)',
+            }}
+          >
+            ↻
+          </div>
+          <div style={{ position: 'absolute', left: 16, top: 240, fontSize: 20, color: muted, letterSpacing: 1.4, textTransform: 'uppercase', fontWeight: 800, writingMode: 'vertical-rl' }}>
+            rerun loop
+          </div>
         </div>
       </div>
-      <BodyText style={{ marginTop: 36 }}>
-        <strong style={{ color: 'var(--osd-text)' }}>Debrief:</strong> ¿qué pasó en el navegador al guardar el archivo?
-      </BodyText>
     </ContentBlock>
   </Frame>
 );
 
-const TextPrimitives: Page = () => (
+const UIPrimitives: Page = () => (
   <Frame>
     <ContentBlock>
       <Eyebrow>Primitivas</Eyebrow>
       <PageHeading>Texto y retroalimentación</PageHeading>
-      <BodyList>
-        <li style={{ marginBottom: 28 }}>
-          Estructura: <Code>st.title</Code>, <Code>st.header</Code>, <Code>st.markdown</Code>, <Code>st.write</Code>.
-        </li>
-        <li style={{ marginBottom: 28 }}>
-          Mensajes de estado: <Code>st.success</Code>, <Code>st.info</Code>, <Code>st.warning</Code>, <Code>st.error</Code>.
-        </li>
-        <li>Úsalos para guiar al usuario y validar resultados.</li>
-      </BodyList>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, marginTop: 4, alignItems: 'start' }}>
+        <WindowShell title="streamlit_app.py" style={{ minHeight: 420 }}>
+          <CodePane fontSize={26}>
+            st.title(<span style={{ color: gdgGreen }}>"Dashboard de Bitcoin"</span>)
+            <br />
+            st.write(<span style={{ color: gdgGreen }}>"Precio de cierre histórico"</span>)
+            <br />
+            st.markdown(<span style={{ color: gdgGreen }}>"**Filtro activo**"</span>)
+            <br />
+            st.success(<span style={{ color: gdgGreen }}>"Datos cargados"</span>)
+          </CodePane>
+        </WindowShell>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+          <div style={{ background: panel, border: `1px solid ${panelLine}`, borderRadius: 'var(--osd-radius)', padding: '20px 28px' }}>
+            <div style={{ fontSize: 32, fontWeight: 900, color: 'var(--osd-text)' }}>Dashboard de Bitcoin</div>
+            <div style={{ fontSize: 26, color: muted, marginTop: 8 }}>Precio de cierre histórico</div>
+            <div style={{ fontSize: 26, color: 'var(--osd-text)', marginTop: 8 }}><strong>Filtro activo</strong></div>
+          </div>
+          <div style={{ background: 'rgba(15,157,88,0.12)', border: `1px solid ${gdgGreen}`, borderLeft: `8px solid ${gdgGreen}`, borderRadius: 'var(--osd-radius)', padding: '20px 28px', color: gdgGreen, fontSize: 28, fontWeight: 700 }}>
+            ✓ Datos cargados
+          </div>
+          <div style={{ fontSize: 25, color: muted, lineHeight: 1.5 }}>
+            Estructura con <Code>st.title</Code>/<Code>st.markdown</Code>; valida con <Code>st.success</Code>/<Code>st.info</Code>.
+          </div>
+        </div>
+      </div>
     </ContentBlock>
   </Frame>
 );
@@ -500,91 +758,67 @@ const WidgetsAsVariables: Page = () => (
     <ContentBlock>
       <Eyebrow>Widgets</Eyebrow>
       <PageHeading>Los widgets son variables</PageHeading>
-      <BodyList>
-        <li style={{ marginBottom: 28 }}>
-          <Code>st.button</Code>, <Code>st.slider</Code> y <Code>st.selectbox</Code> retornan valores.
-        </li>
-        <li style={{ marginBottom: 28 }}>
-          Guarda el valor en una variable y úsalo después como cualquier otra de Python.
-        </li>
-        <li>Si el usuario interactúa, el script se rerun y la variable se actualiza.</li>
-      </BodyList>
-    </ContentBlock>
-  </Frame>
-);
-
-const WidgetCheckpoint: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>Checkpoint</Eyebrow>
-      <PageHeading>Prueba un widget</PageHeading>
-      <BodyText>Abre <Code>exercises/day1/02_widgets.py</Code>:</BodyText>
-      <div
-        style={{
-          background: panel,
-          border: '4px solid ' + gdgBlue,
-          borderRadius: 'var(--osd-radius)',
-          padding: 36,
-          marginTop: 36,
-          maxWidth: 1100,
-        }}
-      >
-        <div style={{ fontSize: 28, fontWeight: 800, color: gdgBlue, marginBottom: 16 }}>META</div>
-        <div style={{ fontSize: 32, lineHeight: 1.5, color: 'var(--osd-text)' }}>
-          Lee un <Code>st.slider</Code> y muestra su valor con <Code>st.write</Code>.
+      <WindowShell title="streamlit_app.py" style={{ width: 1180, marginTop: 4 }}>
+        <CodePane fontSize={30}>
+          min_price = st.slider(<span style={{ color: gdgGreen }}>"Precio mínimo de cierre"</span>, 0, 130000, 30000)
+          <br />
+          year = st.selectbox(<span style={{ color: gdgGreen }}>"Año"</span>, sorted(data[<span style={{ color: gdgYellow }}>"Year"</span>].unique()))
+          <br />
+          <br />
+          <span style={{ color: muted }}>filtrado</span> = data[(data[<span style={{ color: gdgYellow }}>"Close"</span>] &gt;= min_price) &amp; (data[<span style={{ color: gdgYellow }}>"Year"</span>] == year)]
+        </CodePane>
+      </WindowShell>
+      <div style={{ display: 'flex', gap: 28, marginTop: 28, maxWidth: 1180 }}>
+        <div style={{ background: panel, borderTop: `6px solid ${gdgBlue}`, borderRadius: 'var(--osd-radius)', padding: 26, flex: 1 }}>
+          <Code>st.slider</Code>
+          <div style={{ fontSize: 26, color: muted, marginTop: 12, lineHeight: 1.4 }}>Retorna un número.</div>
+        </div>
+        <div style={{ background: panel, borderTop: `6px solid ${gdgGreen}`, borderRadius: 'var(--osd-radius)', padding: 26, flex: 1 }}>
+          <Code>st.selectbox</Code>
+          <div style={{ fontSize: 26, color: muted, marginTop: 12, lineHeight: 1.4 }}>Retorna una opción.</div>
+        </div>
+        <div style={{ background: panel, borderTop: `6px solid ${bitcoin}`, borderRadius: 'var(--osd-radius)', padding: 26, flex: 1 }}>
+          <Code>st.date_input</Code>
+          <div style={{ fontSize: 26, color: muted, marginTop: 12, lineHeight: 1.4 }}>Retorna un rango de fechas.</div>
         </div>
       </div>
-      <BodyText style={{ marginTop: 36 }}>
-        <strong style={{ color: 'var(--osd-text)' }}>Debrief:</strong> ¿cómo cambia el número al mover el control?
-      </BodyText>
     </ContentBlock>
   </Frame>
 );
 
-const DayOneCheckpoint: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>Cierre día 1</Eyebrow>
-      <PageHeading>Widget → Variable → Output</PageHeading>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 32,
-          marginTop: 24,
-          maxWidth: 1200,
-        }}
-      >
-        <FlowCard label="Widget" desc="El usuario interactúa." />
-        <FlowCard label="Variable" desc="Python guarda el valor." />
-        <FlowCard label="Output" desc="Streamlit redibuja." />
-      </div>
-    </ContentBlock>
-  </Frame>
-);
-
-const DayTwoDivider: Page = () => (
-  <Frame>
-    <div className="osd-fade-up" style={{ position: 'absolute', inset: '176px 112px 132px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-      <Eyebrow>Día 2</Eyebrow>
-      <Title>De Pandas a dashboard</Title>
-      <p style={{ fontSize: 44, lineHeight: 1.4, color: muted, maxWidth: 980, marginTop: 34 }}>
-        Conecta análisis de datos con controles interactivos.
-      </p>
-    </div>
-  </Frame>
+const DatasetField = ({ col, q, color = gdgBlue }: { col: string; q: string; color?: string }) => (
+  <div
+    style={{
+      background: panel,
+      borderLeft: `8px solid ${color}`,
+      borderRadius: 'var(--osd-radius)',
+      padding: '20px 26px',
+    }}
+  >
+    <Code>{col}</Code>
+    <div style={{ fontSize: 26, color: muted, marginTop: 10, lineHeight: 1.35 }}>{q}</div>
+  </div>
 );
 
 const DatasetMap: Page = () => (
   <Frame>
-    <ContentBlock>
-      <Eyebrow>Datos</Eyebrow>
-      <PageHeading>El dataset estudiantes_ai.csv</PageHeading>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, maxWidth: 1200, marginTop: 8 }}>
-        <DatasetField col="nombre" q="¿Quién es el estudiante?" />
-        <DatasetField col="carrera" q="¿A qué programa pertenece?" />
-        <DatasetField col="semestre" q="¿Qué tan avanzado está?" />
-        <DatasetField col="interes_ia" q="¿Le interesa la inteligencia artificial?" />
+    <ContentBlock top={130}>
+      <Eyebrow>Datos · Semana 3</Eyebrow>
+      <PageHeading>El dataset btc_diario_limpio.csv</PageHeading>
+      <div style={{ display: 'flex', gap: 36, marginBottom: 24, color: muted, fontSize: 26 }}>
+        <span><strong style={{ color: 'var(--osd-text)' }}>5,285</strong> filas diarias</span>
+        <span>·</span>
+        <span><strong style={{ color: 'var(--osd-text)' }}>2012-01-01 → 2026-06-23</strong></span>
+        <span>·</span>
+        <span><Code>Daily_Return</Code> tiene 1 NaN (fila 0)</span>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+        <DatasetField col="Date" q="Marca temporal diaria." color={gdgBlue} />
+        <DatasetField col="Open / High / Low" q="OHLC del día en USD." color={bitcoin} />
+        <DatasetField col="Close" q="Cierre usado en la gráfica." color={bitcoin} />
+        <DatasetField col="Volume" q="Volumen negociado en BTC." color={gdgGreen} />
+        <DatasetField col="Year / Month" q="Columnas derivadas para filtrar." color={gdgYellow} />
+        <DatasetField col="Daily_Return" q="Retorno porcentual diario." color={gdgRed} />
       </div>
     </ContentBlock>
   </Frame>
@@ -594,187 +828,186 @@ const FilterPattern: Page = () => (
   <Frame>
     <ContentBlock>
       <Eyebrow>Patrón</Eyebrow>
-      <PageHeading>Input → Condición → DataFrame filtrado</PageHeading>
-      <div
-        style={{
-          background: ink,
-          borderRadius: 'var(--osd-radius)',
-          padding: 44,
-          marginTop: 24,
-          maxWidth: 1100,
-          fontFamily: 'ui-monospace, monospace',
-          fontSize: 34,
-          lineHeight: 1.7,
-          color: 'var(--osd-text)',
-        }}
-      >
-        <span style={{ color: gdgBlue }}>carrera</span> = st.selectbox(
-        <br />
-        &nbsp;&nbsp;<span style={{ color: gdgGreen }}>"Elige carrera"</span>, df[<span style={{ color: gdgYellow }}>"carrera"</span>].unique()
-        <br />)
-        <br />
-        <span style={{ color: muted }}>filtrado</span> = df[df[<span style={{ color: gdgYellow }}>"carrera"</span>] == carrera]
-        <br />
-        st.dataframe(filtrado)
-      </div>
+      <PageHeading>Widget → Condición → DataFrame filtrado</PageHeading>
+      <WindowShell title="streamlit_app.py" style={{ width: 1180, marginTop: 4 }}>
+        <CodePane fontSize={30}>
+          <span style={{ color: muted }}># 1. el widget regresa un valor Python</span>
+          <br />
+          years = st.multiselect(<span style={{ color: gdgGreen }}>"Años"</span>, sorted(data[<span style={{ color: gdgYellow }}>"Year"</span>].unique()))
+          <br />
+          <br />
+          <span style={{ color: muted }}># 2. ese valor alimenta una condicion Pandas</span>
+          <br />
+          <span style={{ color: bitcoin }}>if</span> years:
+          <br />
+          &nbsp;&nbsp;data = data[data[<span style={{ color: gdgYellow }}>"Year"</span>].isin(years)]
+          <br />
+          <br />
+          <span style={{ color: muted }}># 3. el DataFrame filtrado alimenta la UI</span>
+          <br />
+          st.dataframe(data)
+        </CodePane>
+      </WindowShell>
     </ContentBlock>
   </Frame>
 );
 
-const PandasFilterCheckpoint: Page = () => (
+const MetricTile = ({ label, value, color = bitcoin }: { label: string; value: string; color?: string }) => (
+  <div
+    style={{
+      background: panel,
+      border: `1px solid ${panelLine}`,
+      borderLeft: `5px solid ${color}`,
+      borderRadius: 6,
+      padding: '12px 16px',
+    }}
+  >
+    <div style={{ fontSize: 14, color: muted, letterSpacing: 1, textTransform: 'uppercase', fontWeight: 700 }}>{label}</div>
+    <div style={{ fontSize: 22, color: 'var(--osd-text)', fontWeight: 800, marginTop: 4 }}>{value}</div>
+  </div>
+);
+
+const DashboardLayout: Page = () => (
   <Frame>
-    <ContentBlock>
-      <Eyebrow>Checkpoint</Eyebrow>
-      <PageHeading>Filtra con Pandas</PageHeading>
-      <BodyText>Abre <Code>exercises/day2/01_pandas_filters.py</Code>:</BodyText>
+    <ContentBlock top={120}>
+      <Eyebrow>Dashboard</Eyebrow>
+      <PageHeading>Sidebar + métricas + gráficas + tabla</PageHeading>
       <div
         style={{
-          background: panel,
-          border: '4px solid ' + gdgGreen,
+          display: 'grid',
+          gridTemplateColumns: '250px 1fr',
+          gap: 20,
+          marginTop: 4,
+          background: '#0b0f14',
+          border: `1px solid ${panelLine}`,
           borderRadius: 'var(--osd-radius)',
-          padding: 36,
-          marginTop: 36,
-          maxWidth: 1100,
+          overflow: 'hidden',
+          maxHeight: 560,
         }}
       >
-        <div style={{ fontSize: 28, fontWeight: 800, color: gdgGreen, marginBottom: 16 }}>META</div>
-        <div style={{ fontSize: 32, lineHeight: 1.5, color: 'var(--osd-text)' }}>
-          Usa un <Code>selectbox</Code> para filtrar el DataFrame y mostrar solo las filas elegidas.
+        <div style={{ background: '#090d12', borderRight: `1px solid ${panelLine}`, padding: '20px 18px' }}>
+          <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--osd-text)', letterSpacing: 1, textTransform: 'uppercase' }}>Filtros</div>
+          <div style={{ fontSize: 15, color: muted, marginTop: 14 }}>Rango de fechas</div>
+          <div style={{ height: 34, background: panel, border: `1px solid ${panelLine}`, borderRadius: 4, marginTop: 6 }} />
+          <div style={{ fontSize: 15, color: muted, marginTop: 16 }}>Años</div>
+          <div style={{ height: 34, background: panel, border: `1px solid ${panelLine}`, borderRadius: 4, marginTop: 6 }} />
+          <div style={{ fontSize: 15, color: muted, marginTop: 16 }}>Meses</div>
+          <div style={{ height: 34, background: panel, border: `1px solid ${panelLine}`, borderRadius: 4, marginTop: 6 }} />
         </div>
-      </div>
-      <BodyText style={{ marginTop: 36 }}>
-        <strong style={{ color: 'var(--osd-text)' }}>Debrief:</strong> ¿qué pasa si eliges otra opción?
-      </BodyText>
-    </ContentBlock>
-  </Frame>
-);
-
-const ShowingData: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>Visualización</Eyebrow>
-      <PageHeading>Muestra datos de tres formas</PageHeading>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32, marginTop: 24, maxWidth: 1200 }}>
-        <ShowCard fn="st.dataframe" desc="Tabla interactiva." />
-        <ShowCard fn="st.metric" desc="Un número clave grande." />
-        <ShowCard fn="st.bar_chart" desc="Gráfica de barras rápida." />
-      </div>
-    </ContentBlock>
-  </Frame>
-);
-
-const LayoutPage: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>Layout</Eyebrow>
-      <PageHeading>Organiza el dashboard</PageHeading>
-      <BodyList>
-        <li style={{ marginBottom: 28 }}>
-          Filtros en la barra lateral con <Code>st.sidebar</Code>.
-        </li>
-        <li style={{ marginBottom: 28 }}>
-          Resultados principales en el área central.
-        </li>
-        <li>KPIs en columnas con <Code>st.columns</Code> para mostrar varias métricas.</li>
-      </BodyList>
-    </ContentBlock>
-  </Frame>
-);
-
-const ReferenceAppWalkthrough: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>Mapa de referencia</Eyebrow>
-      <PageHeading>Explora streamlit_app.py</PageHeading>
-      <BodyList>
-        <li style={{ marginBottom: 28 }}>
-          Página de introducción con contexto del taller.
-        </li>
-        <li style={{ marginBottom: 28 }}>
-          Página de componentes: widgets vistos en acción.
-        </li>
-        <li>Filtros y capstone: el dashboard que vas a replicar.</li>
-      </BodyList>
-    </ContentBlock>
-  </Frame>
-);
-
-const CapstoneBuildPlan: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>Proyecto final</Eyebrow>
-      <PageHeading>Construye tu dashboard</PageHeading>
-      <BodyText>Abre <Code>exercises/day2/02_capstone_starter.py</Code>:</BodyText>
-      <div
-        style={{
-          background: panel,
-          border: '4px solid ' + crestRed,
-          borderRadius: 'var(--osd-radius)',
-          padding: 36,
-          marginTop: 36,
-          maxWidth: 1100,
-        }}
-      >
-        <div style={{ fontSize: 28, fontWeight: 800, color: crestRed, marginBottom: 16 }}>META</div>
-        <div style={{ fontSize: 32, lineHeight: 1.5, color: 'var(--osd-text)' }}>
-          Completa el dashboard: sidebar con filtros, métricas en columnas y gráfica de barras.
+        <div style={{ padding: '20px 22px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+            <MetricTile label="Días" value="1,826" color={gdgBlue} />
+            <MetricTile label="Último cierre" value="$72,000" />
+            <MetricTile label="Máximo cierre" value="$72,000" />
+            <MetricTile label="Retorno diario prom." value="0.12%" color={gdgGreen} />
+            <MetricTile label="Volatilidad" value="3.85%" color={gdgRed} />
+            <MetricTile label="Volumen total" value="4.2M BTC" color={gdgYellow} />
+          </div>
+          <div style={{ height: 150, marginTop: 16, background: panel, border: `1px solid ${panelLine}`, borderRadius: 6, padding: 10 }}>
+            <div style={{ fontSize: 13, color: muted, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>Precio de cierre</div>
+            <div style={{ marginTop: 4 }}><PriceTrace width={640} height={120} strokeWidth={2} animate={false} /></div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
+            <div style={{ height: 70, background: panel, border: `1px solid ${panelLine}`, borderRadius: 6, padding: '6px 10px' }}>
+              <div style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>Cierre prom. por año</div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 44, marginTop: 4 }}>
+                {[12, 28, 45, 60, 38, 70, 55, 82].map((h, i) => (
+                  <span key={i} style={{ width: 10, height: h, background: bitcoin, opacity: 0.7, borderRadius: 2 }} />
+                ))}
+              </div>
+            </div>
+            <div style={{ height: 70, background: panel, border: `1px solid ${panelLine}`, borderRadius: 6, padding: '6px 10px' }}>
+              <div style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>Retorno prom. por mes</div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 44, marginTop: 4 }}>
+                {[20, -10, 35, 18, 42, 25, 30, 15].map((h, i) => (
+                  <span key={i} style={{ width: 10, height: Math.abs(h), background: h < 0 ? gdgRed : gdgGreen, opacity: 0.7, borderRadius: 2 }} />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </ContentBlock>
   </Frame>
 );
 
-const CapstoneSuccessCriteria: Page = () => (
+const DashboardChecklist: Page = () => (
   <Frame>
     <ContentBlock>
-      <Eyebrow>Criterios de éxito</Eyebrow>
-      <PageHeading>Tu dashboard debe cumplir</PageHeading>
+      <Eyebrow>Checklist del dashboard</Eyebrow>
+      <PageHeading>Tu dashboard de Bitcoin debe tener</PageHeading>
       <div style={{ maxWidth: 1100 }}>
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: 'var(--osd-size-body)', lineHeight: 1.55, color: muted }}>
-          <CheckItem>Los filtros actualizan la tabla.</CheckItem>
-          <CheckItem>Las métricas cambian al filtrar.</CheckItem>
-          <CheckItem>La gráfica refleja los datos filtrados.</CheckItem>
-          <CheckItem>Se puede exportar o copiar la tabla resultante.</CheckItem>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: 'var(--osd-size-body)', lineHeight: 1.5, color: muted }}>
+          <CheckItem>Grafica de línea del <Code>Close</Code> por <Code>Date</Code>.</CheckItem>
+          <CheckItem>Cierre promedio por <Code>Year</Code> y retorno promedio por <Code>Month_Name</Code>.</CheckItem>
+          <CheckItem>Metricas: días, último cierre, máximo cierre, retorno prom., volatilidad, volumen total.</CheckItem>
+          <CheckItem>Filtros en sidebar: rango de fechas, años, meses.</CheckItem>
+          <CheckItem>Tabla filtrada y botón <Code>st.download_button</Code> para CSV.</CheckItem>
         </ul>
       </div>
     </ContentBlock>
   </Frame>
 );
 
+const PipelineStep = ({ n, title, desc, color }: { n: number; title: string; desc: string; color: string }) => (
+  <div style={{ background: panel, borderTop: `6px solid ${color}`, borderRadius: 'var(--osd-radius)', padding: 32, flex: 1 }}>
+    <div style={{ fontSize: 28, fontWeight: 900, color, marginBottom: 12 }}>0{n}</div>
+    <div style={{ fontSize: 34, fontWeight: 800, color: 'var(--osd-text)', marginBottom: 12 }}>{title}</div>
+    <div style={{ fontSize: 26, color: muted, lineHeight: 1.4 }}>{desc}</div>
+  </div>
+);
+
 const DeploymentPreview: Page = () => (
   <Frame>
     <ContentBlock>
       <Eyebrow>Despliegue</Eyebrow>
-      <PageHeading>De local a la nube: conceptos</PageHeading>
-      <BodyList>
-        <li style={{ marginBottom: 28 }}>
-          Subes tu repo a GitHub con <Code>requirements.txt</Code> completo.
-        </li>
-        <li style={{ marginBottom: 28 }}>
-          Configuras secrets si tu app necesita credenciales.
-        </li>
-        <li>Streamlit Community Cloud ejecuta <Code>streamlit run app.py</Code> por ti.</li>
-      </BodyList>
+      <PageHeading>De local a Streamlit Community Cloud</PageHeading>
+      <div style={{ display: 'flex', gap: 28, marginTop: 8, maxWidth: 1640 }}>
+        <PipelineStep n={1} title="GitHub" desc="Sube el repo con streamlit_app.py y data/." color={gdgBlue} />
+        <PipelineStep n={2} title="requirements.txt" desc="Lista las dependencias exactas." color={gdgYellow} />
+        <PipelineStep n={3} title="Community Cloud" desc="Apunta a streamlit_app.py y ejecuta." color={gdgGreen} />
+      </div>
+      <div style={{ marginTop: 36, fontSize: 28, color: muted, maxWidth: 1180 }}>
+        Streamlit Cloud corre <Code>streamlit run streamlit_app.py</Code> por ti — la misma app de <Code>localhost:8501</Code>, ahora pública.
+      </div>
     </ContentBlock>
   </Frame>
 );
 
 const Closing: Page = () => (
   <Frame>
-    <div className="osd-fade-up" style={{ position: 'absolute', inset: '176px 112px 132px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div className="osd-fade-up" style={{ position: 'absolute', left: 112, right: 112, top: 170, bottom: 130, display: 'flex', flexDirection: 'column' }}>
       <Eyebrow>Cierre</Eyebrow>
-      <h2 style={{ fontFamily: 'var(--osd-font-display)', fontSize: 92, lineHeight: 1.08, margin: '24px 0 40px', maxWidth: 1320, color: 'var(--osd-text)' }}>Adapta, no reescribas</h2>
-      <BodyList>
-        <li style={{ marginBottom: 28 }}>
-          Reemplaza los datos provisionales por los de la Semana 3.
-        </li>
-        <li style={{ marginBottom: 28 }}>
-          Ajusta los filtros y métricas; la estructura del dashboard sigue igual.
-        </li>
-        <li>Gracias. ¿Preguntas?</li>
-      </BodyList>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 80, marginTop: 28, flex: 1, alignItems: 'center' }}>
+        <div>
+          <h2 style={{ fontFamily: 'var(--osd-font-display)', fontSize: 92, lineHeight: 1.05, margin: '0 0 32px', maxWidth: 1000, color: 'var(--osd-text)', fontWeight: 900 }}>
+            Adapta, no reescribas
+          </h2>
+          <BodyList>
+            <li style={{ marginBottom: 20 }}>
+              El mismo patrón sirve para cualquier dataset de la Semana 3 o futuro.
+            </li>
+            <li style={{ marginBottom: 20 }}>
+              Cambia filtros, métricas y gráficas; la estructura del dashboard se mantiene.
+            </li>
+            <li>Gracias. ¿Preguntas?</li>
+          </BodyList>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
+          <div style={{ background: '#fff', padding: 16, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
+            <img src={repo} alt="QR del repositorio" style={{ display: 'block', width: 260, height: 260, borderRadius: 4 }} />
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>
+              Escanea para clonar el repo
+            </div>
+            <div style={{ fontSize: 20, color: muted, marginTop: 6, fontFamily: mono }}>
+              github.com/ivanovishado/mini-streamlit-demo
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div style={{ position: 'absolute', left: 112, bottom: 154, width: 380, height: 18, background: crestRed }} />
   </Frame>
 );
 
@@ -800,32 +1033,25 @@ export const transition: SlideTransition = {
 };
 
 export const meta: SlideMeta = {
-  title: 'Streamlit: de análisis de datos a web app local',
+  title: 'Streamlit: de notebook a dashboard de Bitcoin',
   theme: 'udeg-gdg',
-  createdAt: '2026-06-17T04:11:14.174Z',
+  createdAt: '2026-06-23T07:46:33.698Z',
 };
 
 export default [
   Cover,
-  PromisePage,
-  TwoDayMap,
+  Presenter,
+  NotebookVsApp,
+  SessionMap,
   Setup,
   WhatIsStreamlit,
   MentalModel,
-  FirstAppCheckpoint,
-  TextPrimitives,
+  UIPrimitives,
   WidgetsAsVariables,
-  WidgetCheckpoint,
-  DayOneCheckpoint,
-  DayTwoDivider,
   DatasetMap,
   FilterPattern,
-  PandasFilterCheckpoint,
-  ShowingData,
-  LayoutPage,
-  ReferenceAppWalkthrough,
-  CapstoneBuildPlan,
-  CapstoneSuccessCriteria,
+  DashboardLayout,
+  DashboardChecklist,
   DeploymentPreview,
   Closing,
 ] satisfies Page[];
