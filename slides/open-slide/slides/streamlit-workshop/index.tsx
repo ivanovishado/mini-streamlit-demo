@@ -1077,7 +1077,6 @@ export default [
   Presenter,
   NotebookVsApp,
   SessionMap,
-  Setup,
   WhatIsStreamlit,
   MentalModel,
   UIPrimitives,
@@ -1085,7 +1084,6 @@ export default [
   DatasetMap,
   FilterPattern,
   DashboardLayout,
-  DashboardChecklist,
   DeploymentPreview,
   Closing,
 ] satisfies Page[];
