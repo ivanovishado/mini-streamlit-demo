@@ -1,6 +1,7 @@
 import type { DesignSystem, Page, SlideMeta, SlideTransition } from '@open-slide/core';
 import { ImagePlaceholder, useSlidePageNumber } from '@open-slide/core';
 import repo from './assets/repo.png';
+import linkedin from './assets/linkedin.png';
 
 export const design: DesignSystem = {
   palette: { bg: '#0e1116', text: '#f5f7fa', accent: '#f7931a' },
@@ -978,7 +979,7 @@ const Closing: Page = () => (
   <Frame>
     <div className="osd-fade-up" style={{ position: 'absolute', left: 112, right: 112, top: 170, bottom: 130, display: 'flex', flexDirection: 'column' }}>
       <Eyebrow>Cierre</Eyebrow>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 80, marginTop: 28, flex: 1, alignItems: 'center' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 480px', gap: 72, marginTop: 28, flex: 1, alignItems: 'center' }}>
         <div>
           <h2 style={{ fontFamily: 'var(--osd-font-display)', fontSize: 92, lineHeight: 1.05, margin: '0 0 32px', maxWidth: 1000, color: 'var(--osd-text)', fontWeight: 900 }}>
             Adapta, no reescribas
@@ -993,16 +994,31 @@ const Closing: Page = () => (
             <li>Gracias. ¿Preguntas?</li>
           </BodyList>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
-          <div style={{ background: '#fff', padding: 16, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
-            <img src={repo} alt="QR del repositorio" style={{ display: 'block', width: 260, height: 260, borderRadius: 4 }} />
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>
-              Escanea para clonar el repo
+        <div style={{ display: 'flex', gap: 24, justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+            <div style={{ background: '#fff', padding: 14, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
+              <img src={repo} alt="QR del repositorio" style={{ display: 'block', width: 200, height: 200, borderRadius: 4 }} />
             </div>
-            <div style={{ fontSize: 20, color: muted, marginTop: 6, fontFamily: mono }}>
-              github.com/ivanovishado/mini-streamlit-demo
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>
+                Repo
+              </div>
+              <div style={{ fontSize: 16, color: muted, marginTop: 4, fontFamily: mono }}>
+                github.com/ivanovishado/mini-streamlit-demo
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+            <div style={{ background: '#fff', padding: 14, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
+              <img src={linkedin} alt="QR de LinkedIn" style={{ display: 'block', width: 200, height: 200, borderRadius: 4 }} />
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>
+                LinkedIn
+              </div>
+              <div style={{ fontSize: 16, color: muted, marginTop: 4, fontFamily: mono }}>
+                in/ivan-galaviz
+              </div>
             </div>
           </div>
         </div>
