@@ -32,6 +32,15 @@ jobs:
           cache-dependency-path: slides/open-slide/package-lock.json
       - run: npm ci
       - run: npm run build
+      - name: Add SPA fallback and root redirect
+        run: |
+          cp dist/index.html dist/404.html
+          node -e "
+            const fs = require('fs');
+            const html = fs.readFileSync('dist/index.html', 'utf8');
+            const redirect = '<script>if(location.pathname===\"/mini-streamlit-demo/\"||location.pathname===\"/mini-streamlit-demo\"){location.replace(\"/mini-streamlit-demo/s/streamlit-workshop\");}</script>';
+            fs.writeFileSync('dist/index.html', redirect + html);
+          "
       - uses: actions/upload-pages-artifact@v3
         with:
           path: slides/open-slide/dist
