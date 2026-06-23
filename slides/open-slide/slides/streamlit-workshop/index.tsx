@@ -984,7 +984,7 @@ const Closing: Page = () => (
   <Frame>
     <div className="osd-fade-up" style={{ position: 'absolute', left: 112, right: 112, top: 170, bottom: 130, display: 'flex', flexDirection: 'column' }}>
       <Eyebrow>Cierre</Eyebrow>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 480px', gap: 72, marginTop: 28, flex: 1, alignItems: 'center' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 580px', gap: 72, marginTop: 28, flex: 1, alignItems: 'center' }}>
         <div>
           <h2 style={{ fontFamily: 'var(--osd-font-display)', fontSize: 92, lineHeight: 1.05, margin: '0 0 32px', maxWidth: 1000, color: 'var(--osd-text)', fontWeight: 900 }}>
             Adapta, no reescribas
@@ -999,23 +999,36 @@ const Closing: Page = () => (
             <li>Gracias. ¿Preguntas?</li>
           </BodyList>
         </div>
-        <div style={{ display: 'flex', gap: 24, justifyContent: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-            <div style={{ background: '#fff', padding: 14, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
-              <img src={repo} alt="QR del repositorio" style={{ display: 'block', width: 200, height: 200, borderRadius: 4 }} />
+        <div style={{ display: 'flex', gap: 42, justifyContent: 'center', alignItems: 'flex-start' }}>
+          <div style={{ width: 250, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+            <div style={{ background: '#fff', padding: 16, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
+              <div style={{ width: 220, height: 220, borderRadius: 4 }}>
+                <img src={repo} alt="QR del repositorio" style={{ display: 'block', width: 220, height: 220, objectFit: 'contain' }} />
+              </div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>
                 Repo
               </div>
-              <div style={{ fontSize: 16, color: muted, marginTop: 4, fontFamily: mono }}>
+              <div style={{ fontSize: 15, lineHeight: 1.35, color: muted, marginTop: 4, fontFamily: mono }}>
                 github.com/ivanovishado/mini-streamlit-demo
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-            <div style={{ background: '#fff', padding: 14, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
-              <img src={linkedin} alt="QR de LinkedIn" style={{ display: 'block', width: 200, height: 200, borderRadius: 4 }} />
+          <div style={{ width: 250, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+            <div style={{ background: '#fff', padding: 16, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
+              <div style={{ width: 220, height: 220, borderRadius: 4 }}>
+                <img
+                  src={linkedin}
+                  alt="QR de LinkedIn"
+                  style={{
+                    display: 'block',
+                    width: 220,
+                    height: 220,
+                    objectFit: 'contain',
+                  }}
+                />
+              </div>
             </div>
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>

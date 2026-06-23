@@ -31,16 +31,20 @@ def apply_theme() -> None:
         }
         div[data-testid="stMetric"] {
             border-left: 5px solid var(--udg-red);
-            background: #fff8ea;
+            background: rgba(143, 16, 24, 0.14);
             padding: 1rem;
             border-radius: 0.5rem;
         }
         .course-callout {
             border-left: 6px solid var(--gdg-blue);
-            background: #f6f9ff;
+            background: rgba(66, 133, 244, 0.16);
+            color: inherit;
             padding: 1rem 1.2rem;
             border-radius: 0.5rem;
             margin: 1rem 0;
+        }
+        .course-callout strong {
+            color: inherit;
         }
         </style>
         """,
