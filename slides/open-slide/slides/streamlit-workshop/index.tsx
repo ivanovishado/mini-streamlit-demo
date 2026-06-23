@@ -93,6 +93,10 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       font-size: 0.88em;
       border: 1px solid ${panelLine};
     }
+    ::selection {
+      background: ${bitcoin};
+      color: ${ink};
+    }
   `;
   document.head.appendChild(style);
 }
