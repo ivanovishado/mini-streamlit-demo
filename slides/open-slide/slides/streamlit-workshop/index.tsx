@@ -1,7 +1,8 @@
 import type { DesignSystem, Page, SlideMeta, SlideTransition } from '@open-slide/core';
-import { ImagePlaceholder, useSlidePageNumber } from '@open-slide/core';
+import { useSlidePageNumber } from '@open-slide/core';
 import repo from './assets/repo.png';
 import linkedin from './assets/linkedin.png';
+import ivan from './assets/ivan.jpeg';
 
 export const design: DesignSystem = {
   palette: { bg: '#0e1116', text: '#f5f7fa', accent: '#f7931a' },
@@ -431,7 +432,7 @@ const BtcRing = ({ size = 460 }: { size?: number }) => (
 const Cover: Page = () => (
   <Frame>
     <div className="osd-fade-up" style={{ position: 'absolute', left: 112, top: 210, width: 1180 }}>
-      <Eyebrow>Taller UdeG x GDG · 2h code-along</Eyebrow>
+      <Eyebrow>Taller UdeG x GDG</Eyebrow>
       <Title>Streamlit</Title>
       <p style={{ fontSize: 56, lineHeight: 1.2, color: 'var(--osd-text)', maxWidth: 1080, margin: '28px 0 0', fontWeight: 500 }}>
         De notebook a dashboard de Bitcoin
@@ -467,7 +468,7 @@ const Presenter: Page = () => (
             overflow: 'hidden',
           }}
         >
-          <ImagePlaceholder hint="Foto de Iván Galaviz" width={430} height={430} />
+          <img src={ivan} alt="Iván Galaviz" style={{ width: 440, height: 440, objectFit: 'cover', borderRadius: 'var(--osd-radius)' }} />
         </div>
         <div>
           <h2 style={{ fontFamily: 'var(--osd-font-display)', fontSize: 92, lineHeight: 1.05, margin: 0, color: 'var(--osd-text)', fontWeight: 900 }}>Ivan Galaviz</h2>

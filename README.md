@@ -109,7 +109,7 @@ Cada bloque se acompaña de la app en vivo en `http://localhost:8501`.
 
 ## Presentación
 
-Las slides viven en `slides/open-slide/` como un deck de React con el framework [open-slide](https://open-slide.ai). Para editarlas o presentarlas:
+Las slides viven en `slides/open-slide/` como un deck de React con el framework [open-slide](https://open-slide.dev/). Para editarlas o presentarlas:
 
 ```bash
 cd slides/open-slide
@@ -117,7 +117,7 @@ npm run dev      # servidor de desarrollo
 npm run build    # build de producción
 ```
 
-El deck companiona la app: cubre el modelo mental de Streamlit, el dataset de Bitcoin, el patrón widget → filtro → DataFrame, el layout del dashboard y el despliegue.
+El deck acompaña a la app: cubre el modelo mental de Streamlit, el dataset de Bitcoin, el patrón widget → filtro → DataFrame, el layout del dashboard y el despliegue.
 
 ## VS Code
 
