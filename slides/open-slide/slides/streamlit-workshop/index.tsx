@@ -19,10 +19,7 @@ const muted = '#8b95a7';
 const panel = '#161b22';
 const panelLine = '#21262d';
 const bitcoin = '#f7931a';
-const up = '#0f9d58';
-const down = '#ea4335';
 const crestRed = '#B12028';
-const olive = '#8F993E';
 const gdgBlue = '#4285f4';
 const gdgGreen = '#0f9d58';
 const gdgYellow = '#fbbc04';
@@ -235,21 +232,6 @@ const BodyList = ({ children, style }: { children: React.ReactNode; style?: Reac
   </ul>
 );
 
-const BodyText = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
-  <p
-    style={{
-      fontSize: 'var(--osd-size-body)',
-      lineHeight: 1.5,
-      color: muted,
-      margin: 0,
-      maxWidth: 980,
-      ...style,
-    }}
-  >
-    {children}
-  </p>
-);
-
 const Code = ({ children }: { children: React.ReactNode }) => <span className="osd-code">{children}</span>;
 
 const TrafficLights = () => (
@@ -346,13 +328,6 @@ const CodePane = ({
   </div>
 );
 
-const CheckItem = ({ children }: { children: React.ReactNode }) => (
-  <li style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-    <span style={{ color: 'var(--osd-accent)', fontWeight: 800, fontSize: 30, lineHeight: 1.2 }}>✓</span>
-    <span>{children}</span>
-  </li>
-);
-
 const PriceTrace = ({
   width,
   height,
@@ -386,7 +361,14 @@ const PriceTrace = ({
   const linePath = `M${pts.join(' L')}`;
   const areaPath = `${linePath} L${width},${height} L0,${height} Z`;
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" style={{ display: 'block' }}>
+    <svg
+      aria-hidden="true"
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
+      style={{ display: 'block' }}
+    >
       <path d={areaPath} fill={stroke} fillOpacity={fillOpacity} />
       <path
         d={linePath}
@@ -536,88 +518,6 @@ const NotebookVsApp: Page = () => (
           </div>
         </WindowShell>
       </div>
-    </ContentBlock>
-  </Frame>
-);
-
-const TimelineSegment = ({
-  start,
-  end,
-  label,
-  color,
-  width,
-}: {
-  start: string;
-  end: string;
-  label: string;
-  color: string;
-  width: number;
-}) => (
-  <div style={{ width, flexShrink: 0 }}>
-    <div style={{ height: 56, background: color, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: ink, fontWeight: 900, fontSize: 22, letterSpacing: 0.5 }}>
-      {start}–{end}
-    </div>
-    <div style={{ fontSize: 22, color: muted, marginTop: 14, lineHeight: 1.35, fontWeight: 600 }}>{label}</div>
-  </div>
-);
-
-const SessionMap: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>Mapa de la sesión</Eyebrow>
-      <PageHeading>2 horas, de script a dashboard</PageHeading>
-      <div style={{ display: 'flex', gap: 16, marginTop: 16 }}>
-        <TimelineSegment start="0:00" end="0:10" label="Intro, setup y objetivo" color={gdgBlue} width={250} />
-        <TimelineSegment start="0:10" end="0:35" label="Modelo mental + UI" color={gdgGreen} width={250} />
-        <TimelineSegment start="0:35" end="1:05" label="Widgets → Pandas" color={gdgYellow} width={250} />
-        <TimelineSegment start="1:05" end="1:40" label="Dashboard Bitcoin" color={bitcoin} width={250} />
-      </div>
-      <div style={{ display: 'flex', gap: 16, marginTop: 36 }}>
-        <TimelineSegment start="1:40" end="1:55" label="Despliegue preview" color={gdgRed} width={516} />
-        <TimelineSegment start="1:55" end="2:00" label="Cierre y preguntas" color={crestRed} width={250} />
-      </div>
-      <div style={{ marginTop: 40, fontSize: 26, color: muted, maxWidth: 1200 }}>
-        Cada bloque se acompaña de la app en vivo: <Code>http://localhost:8501</Code>
-      </div>
-    </ContentBlock>
-  </Frame>
-);
-
-const Setup: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>Setup</Eyebrow>
-      <PageHeading>Antes de empezar</PageHeading>
-      <WindowShell title="~/streamlit-workshop — zsh" style={{ width: 1180 }}>
-        <div style={{ padding: '32px 44px', fontFamily: mono, fontSize: 28, lineHeight: 1.7, color: muted }}>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <span style={{ color: gdgGreen }}>$</span>
-            <span className="osd-type" style={{ color: 'var(--osd-text)' }}>
-              source venv/bin/activate
-            </span>
-          </div>
-          {[
-            ['✓', 'Entorno virtual activo'],
-            ['$', 'pip install -r requirements.txt'],
-            ['✓', 'Dependencias instaladas'],
-            ['$', 'streamlit run streamlit_app.py'],
-            ['✓', 'App en http://localhost:8501'],
-          ].map(([prefix, text], index) => (
-            <div
-              key={text}
-              className="osd-stream"
-              style={{ display: 'flex', gap: 16, animationDelay: `${1.6 + index * 0.16}s` }}
-            >
-              <span style={{ color: prefix === '$' ? gdgGreen : bitcoin }}>{prefix}</span>
-              <span style={{ color: prefix === '$' ? muted : 'var(--osd-text)' }}>{text}</span>
-            </div>
-          ))}
-          <div className="osd-stream" style={{ display: 'flex', gap: 16, animationDelay: '2.6s' }}>
-            <span style={{ color: gdgGreen }}>$</span>
-            <span className="osd-caret" style={{ color: 'var(--osd-text)' }} />
-          </div>
-        </div>
-      </WindowShell>
     </ContentBlock>
   </Frame>
 );
@@ -918,39 +818,31 @@ const DashboardLayout: Page = () => (
             <div style={{ height: 70, background: panel, border: `1px solid ${panelLine}`, borderRadius: 6, padding: '6px 10px' }}>
               <div style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>Cierre prom. por año</div>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 44, marginTop: 4 }}>
-                {[12, 28, 45, 60, 38, 70, 55, 82].map((h, i) => (
-                  <span key={i} style={{ width: 10, height: h, background: bitcoin, opacity: 0.7, borderRadius: 2 }} />
-                ))}
+                <span style={{ width: 10, height: 12, background: bitcoin, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 28, background: bitcoin, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 45, background: bitcoin, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 60, background: bitcoin, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 38, background: bitcoin, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 70, background: bitcoin, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 55, background: bitcoin, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 82, background: bitcoin, opacity: 0.7, borderRadius: 2 }} />
               </div>
             </div>
             <div style={{ height: 70, background: panel, border: `1px solid ${panelLine}`, borderRadius: 6, padding: '6px 10px' }}>
               <div style={{ fontSize: 12, color: muted, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700 }}>Retorno prom. por mes</div>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 44, marginTop: 4 }}>
-                {[20, -10, 35, 18, 42, 25, 30, 15].map((h, i) => (
-                  <span key={i} style={{ width: 10, height: Math.abs(h), background: h < 0 ? gdgRed : gdgGreen, opacity: 0.7, borderRadius: 2 }} />
-                ))}
+                <span style={{ width: 10, height: 20, background: gdgGreen, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 10, background: gdgRed, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 35, background: gdgGreen, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 18, background: gdgGreen, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 42, background: gdgGreen, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 25, background: gdgGreen, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 30, background: gdgGreen, opacity: 0.7, borderRadius: 2 }} />
+                <span style={{ width: 10, height: 15, background: gdgGreen, opacity: 0.7, borderRadius: 2 }} />
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </ContentBlock>
-  </Frame>
-);
-
-const DashboardChecklist: Page = () => (
-  <Frame>
-    <ContentBlock>
-      <Eyebrow>Checklist del dashboard</Eyebrow>
-      <PageHeading>Tu dashboard de Bitcoin debe tener</PageHeading>
-      <div style={{ maxWidth: 1100 }}>
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: 'var(--osd-size-body)', lineHeight: 1.5, color: muted }}>
-          <CheckItem>Grafica de línea del <Code>Close</Code> por <Code>Date</Code>.</CheckItem>
-          <CheckItem>Cierre promedio por <Code>Year</Code> y retorno promedio por <Code>Month_Name</Code>.</CheckItem>
-          <CheckItem>Metricas: días, último cierre, máximo cierre, retorno prom., volatilidad, volumen total.</CheckItem>
-          <CheckItem>Filtros en sidebar: rango de fechas, años, meses.</CheckItem>
-          <CheckItem>Tabla filtrada y botón <Code>st.download_button</Code> para CSV.</CheckItem>
-        </ul>
       </div>
     </ContentBlock>
   </Frame>

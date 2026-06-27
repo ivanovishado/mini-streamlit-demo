@@ -190,7 +190,7 @@ def render_sqlite_dashboard() -> None:
     st.markdown(
         """
         <div class="course-callout">
-        <strong>Idea para clase:</strong> CSV es práctico para comenzar; SQL permite separar
+        CSV es práctico para comenzar; SQL permite separar
         almacenamiento, consultas y aplicación cuando el análisis crece.
         </div>
         """,

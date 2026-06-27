@@ -1,0 +1,9 @@
+Date,Close,Volume,Year,Month,Daily_Return,Scenario,Analyst,Note
+2026-06-16,104820.50,28450.12,2026,6,1.24,Base,Ivan,Upload demo row copied into session state
+2026-06-17,103915.20,30112.76,2026,6,-0.86,Base,Ivan,Shared columns should match the Bitcoin dataset
+2026-06-18,105330.10,27640.33,2026,6,1.36,Bull,Ivan,Extra columns should appear only in uploaded columns
+2026-06-19,107845.75,32980.45,2026,6,2.39,Bull,Ivan,Use this row to discuss user-provided annotations
+2026-06-20,106210.40,25120.88,2026,6,-1.52,Pullback,Ivan,Session state keeps this preview after reruns
+2026-06-21,108440.90,34250.64,2026,6,2.10,Bull,Ivan,Compare loaded row count against built-in Bitcoin rows
+2026-06-22,109125.35,31888.90,2026,6,0.63,Base,Ivan,The preview intentionally stays small for class
+2026-06-23,110008.80,35670.21,2026,6,0.81,Bull,Ivan,Clear uploaded data to reset session state

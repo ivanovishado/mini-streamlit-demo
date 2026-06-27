@@ -31,6 +31,7 @@ jobs:
           cache: npm
           cache-dependency-path: slides/open-slide/package-lock.json
       - run: npm ci
+      - run: npm run check
       - run: npm run build
       - name: Add SPA fallback and root redirect
         run: |
