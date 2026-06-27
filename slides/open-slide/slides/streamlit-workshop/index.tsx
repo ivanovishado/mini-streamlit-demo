@@ -583,9 +583,6 @@ const WhatIsStreamlit: Page = () => (
           <div style={{ padding: '28px 34px', color: 'var(--osd-text)' }}>
             <div style={{ fontSize: 34, fontWeight: 900, lineHeight: 1.2 }}>Dashboard de Bitcoin</div>
             <div style={{ fontSize: 24, color: muted, marginTop: 14 }}>Precio histórico</div>
-            <div style={{ marginTop: 32, height: 200, width: '100%' }}>
-              <PriceTrace width={460} height={200} strokeWidth={3} animate={false} />
-            </div>
           </div>
         </div>
       </div>
@@ -614,7 +611,7 @@ const MentalModel: Page = () => (
     <ContentBlock>
       <Eyebrow>Modelo mental</Eyebrow>
       <PageHeading>El script se re-ejecuta de arriba hacia abajo</PageHeading>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 90px', gap: 24, alignItems: 'start', marginTop: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '620px 90px', gap: 24, alignItems: 'start', marginTop: 8 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 26 }}>
           <RerunNode label="1 · Cambia un widget" desc="El usuario mueve un slider o elige un año." color={gdgBlue} />
           <div style={{ color: bitcoin, fontSize: 30, marginLeft: 280, fontWeight: 900 }}>↓</div>
@@ -633,7 +630,7 @@ const MentalModel: Page = () => (
           <div
             style={{
               position: 'absolute',
-              left: -28,
+              left: -40,
               top: 250,
               color: crestRed,
               fontSize: 40,
@@ -643,7 +640,7 @@ const MentalModel: Page = () => (
           >
             ↻
           </div>
-          <div style={{ position: 'absolute', left: 16, top: 240, fontSize: 20, color: muted, letterSpacing: 1.4, textTransform: 'uppercase', fontWeight: 800, writingMode: 'vertical-rl' }}>
+          <div style={{ position: 'absolute', left: 4, top: 240, fontSize: 20, color: muted, letterSpacing: 1.4, textTransform: 'uppercase', fontWeight: 800, writingMode: 'vertical-rl' }}>
             rerun loop
           </div>
         </div>
