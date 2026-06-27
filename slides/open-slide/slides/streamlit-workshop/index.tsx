@@ -1,8 +1,9 @@
 import type { DesignSystem, Page, SlideMeta, SlideTransition } from '@open-slide/core';
 import { useSlidePageNumber } from '@open-slide/core';
-import repo from './assets/repo.png';
-import linkedin from './assets/linkedin.png';
 import ivan from './assets/ivan.jpeg';
+import linkedin from './assets/linkedin.png';
+import repo from './assets/repo.png';
+import slidesQr from './assets/slides.png';
 
 export const design: DesignSystem = {
   palette: { bg: '#0e1116', text: '#f5f7fa', accent: '#f7931a' },
@@ -445,8 +446,10 @@ const Cover: Page = () => (
         De <Code>streamlit run streamlit_app.py</Code> a un dashboard local filtrable en 2 horas.
       </p>
     </div>
-    <div style={{ position: 'absolute', right: 96, top: 230, width: 660, height: 360 }}>
-      <PriceTrace width={660} height={360} strokeWidth={4} />
+    <div style={{ position: 'absolute', right: 96, top: 230, width: 660, height: 610 }}>
+      <div style={{ position: 'absolute', left: 0, top: 240 }}>
+        <PriceTrace width={660} height={360} strokeWidth={4} />
+      </div>
       <div style={{ position: 'absolute', right: -40, top: -70 }}>
         <BtcRing size={300} />
       </div>
@@ -647,9 +650,7 @@ const WhatIsStreamlit: Page = () => (
           }}
         >
           <div style={{ height: 44, background: '#090d12', borderBottom: `1px solid ${panelLine}`, display: 'flex', alignItems: 'center', padding: '0 18px', gap: 10 }}>
-            <span style={{ width: 12, height: 12, borderRadius: '50%', background: gdgBlue }} />
-            <span style={{ width: 12, height: 12, borderRadius: '50%', background: gdgYellow }} />
-            <span style={{ width: 12, height: 12, borderRadius: '50%', background: gdgGreen }} />
+            <TrafficLights />
             <span style={{ marginLeft: 14, fontFamily: mono, fontSize: 18, color: muted }}>localhost:8501</span>
           </div>
           <div style={{ padding: '28px 34px', color: 'var(--osd-text)' }}>
@@ -984,7 +985,7 @@ const Closing: Page = () => (
   <Frame>
     <div className="osd-fade-up" style={{ position: 'absolute', left: 112, right: 112, top: 170, bottom: 130, display: 'flex', flexDirection: 'column' }}>
       <Eyebrow>Cierre</Eyebrow>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 580px', gap: 72, marginTop: 28, flex: 1, alignItems: 'center' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 650px', gap: 48, marginTop: 28, flex: 1, alignItems: 'center' }}>
         <div>
           <h2 style={{ fontFamily: 'var(--osd-font-display)', fontSize: 92, lineHeight: 1.05, margin: '0 0 32px', maxWidth: 1000, color: 'var(--osd-text)', fontWeight: 900 }}>
             Adapta, no reescribas
@@ -999,43 +1000,67 @@ const Closing: Page = () => (
             <li>Gracias. ¿Preguntas?</li>
           </BodyList>
         </div>
-        <div style={{ display: 'flex', gap: 42, justifyContent: 'center', alignItems: 'flex-start' }}>
-          <div style={{ width: 250, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-            <div style={{ background: '#fff', padding: 16, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
-              <div style={{ width: 220, height: 220, borderRadius: 4 }}>
-                <img src={repo} alt="QR del repositorio" style={{ display: 'block', width: 220, height: 220, objectFit: 'contain' }} />
+        <div style={{ display: 'flex', gap: 24, justifyContent: 'center', alignItems: 'flex-start' }}>
+          <div style={{ width: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <div style={{ background: '#fff', padding: 14, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
+              <div style={{ width: 172, height: 172, borderRadius: 4 }}>
+                <img src={repo} alt="QR del repositorio" style={{ display: 'block', width: 172, height: 172, objectFit: 'contain' }} />
               </div>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>
                 Repo
               </div>
-              <div style={{ fontSize: 15, lineHeight: 1.35, color: muted, marginTop: 4, fontFamily: mono }}>
+              <div style={{ fontSize: 13, lineHeight: 1.35, color: muted, marginTop: 4, fontFamily: mono }}>
                 github.com/ivanovishado/mini-streamlit-demo
               </div>
             </div>
           </div>
-          <div style={{ width: 250, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-            <div style={{ background: '#fff', padding: 16, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
-              <div style={{ width: 220, height: 220, borderRadius: 4 }}>
+          <div style={{ width: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <div style={{ background: '#fff', padding: 14, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
+              <div style={{ width: 172, height: 172, borderRadius: 4 }}>
                 <img
                   src={linkedin}
                   alt="QR de LinkedIn"
                   style={{
                     display: 'block',
-                    width: 220,
-                    height: 220,
+                    width: 172,
+                    height: 172,
                     objectFit: 'contain',
                   }}
                 />
               </div>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>
                 LinkedIn
               </div>
-              <div style={{ fontSize: 16, color: muted, marginTop: 4, fontFamily: mono }}>
+              <div style={{ fontSize: 14, color: muted, marginTop: 4, fontFamily: mono }}>
                 in/ivanovishado
+              </div>
+            </div>
+          </div>
+          <div style={{ width: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <div style={{ background: '#fff', padding: 14, borderRadius: 'var(--osd-radius)', boxShadow: '0 24px 60px -20px rgba(0,0,0,0.7)' }}>
+              <div style={{ width: 172, height: 172, borderRadius: 4 }}>
+                <img
+                  src={slidesQr}
+                  alt="QR de la presentación"
+                  style={{
+                    display: 'block',
+                    width: 172,
+                    height: 172,
+                    objectFit: 'contain',
+                  }}
+                />
+              </div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--osd-accent)', letterSpacing: 0.3 }}>
+                Slides
+              </div>
+              <div style={{ fontSize: 14, color: muted, marginTop: 4, fontFamily: mono }}>
+                Presentación
               </div>
             </div>
           </div>
@@ -1076,7 +1101,6 @@ export default [
   Cover,
   Presenter,
   NotebookVsApp,
-  SessionMap,
   WhatIsStreamlit,
   MentalModel,
   UIPrimitives,

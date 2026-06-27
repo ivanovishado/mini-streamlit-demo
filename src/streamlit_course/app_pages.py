@@ -3,15 +3,31 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from .data_utils import MONTH_NAMES, filter_bitcoin_data, load_bitcoin_data, summarize_bitcoin_data
+from .data_utils import (
+    MONTH_NAMES,
+    filter_bitcoin_data,
+    load_bitcoin_data,
+    prepare_bitcoin_data,
+    summarize_bitcoin_data,
+)
+from .openrouter_client import DEFAULT_MODEL, OpenRouterError, send_openrouter_message
 
 
 DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "btc_diario_limpio.csv"
+DB_PATH = Path(__file__).resolve().parents[2] / "data" / "bitcoin.db"
 
 
 @st.cache_data
 def get_bitcoin_data() -> pd.DataFrame:
     return load_bitcoin_data(DATA_PATH)
+
+
+@st.cache_data
+def get_bitcoin_data_from_sql() -> pd.DataFrame:
+    database_url = f"sqlite:///{DB_PATH}"
+    connection = st.connection("bitcoin_db", type="sql", url=database_url)
+    data = connection.query("SELECT * FROM bitcoin_daily ORDER BY Date", ttl=3600)
+    return prepare_bitcoin_data(data)
 
 
 def apply_theme() -> None:
@@ -160,7 +176,136 @@ def render_capstone() -> None:
     apply_theme()
     st.title("Dashboard de Bitcoin")
     data = get_bitcoin_data()
+    render_bitcoin_dashboard(data, download_filename="bitcoin_filtrado.csv")
 
+
+def render_sqlite_dashboard() -> None:
+    apply_theme()
+    st.title("Dashboard desde SQLite")
+    st.write(
+        "Esta página usa la misma interfaz del dashboard, pero los datos salen de una tabla "
+        "SQLite local en lugar del CSV."
+    )
+
+    st.markdown(
+        """
+        <div class="course-callout">
+        <strong>Idea para clase:</strong> CSV es práctico para comenzar; SQL permite separar
+        almacenamiento, consultas y aplicación cuando el análisis crece.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    try:
+        data = get_bitcoin_data_from_sql()
+    except Exception as error:
+        st.error("No pude leer `data/bitcoin.db` con la conexión SQL de Streamlit.")
+        st.code("python scripts/build_sqlite.py", language="bash")
+        st.caption(str(error))
+        return
+
+    render_bitcoin_dashboard(data, download_filename="bitcoin_sqlite_filtrado.csv")
+
+
+def render_openrouter_chat() -> None:
+    apply_theme()
+    st.title("OpenRouter chat")
+    st.write(
+        "Una página mínima para conectar Streamlit con un modelo gratuito vía OpenRouter."
+    )
+
+    with st.sidebar:
+        st.header("OpenRouter")
+        model = st.text_input("Modelo", DEFAULT_MODEL)
+        secret_api_key = read_streamlit_secret("OPENROUTER_API_KEY")
+        temporary_api_key = st.text_input(
+            "API key temporal",
+            type="password",
+            help="Se usa solo en esta sesión si no hay llave en .streamlit/secrets.toml.",
+        )
+
+    api_key = secret_api_key or temporary_api_key
+    if secret_api_key:
+        st.info("Usando `OPENROUTER_API_KEY` desde `st.secrets`.")
+    else:
+        st.warning("Agrega `OPENROUTER_API_KEY` a `.streamlit/secrets.toml` o pega una llave temporal.")
+
+    prompt = st.text_area(
+        "Pregunta",
+        "Explica Streamlit en 3 bullets para estudiantes que ya saben Pandas.",
+        height=140,
+    )
+
+    if st.button("Enviar a OpenRouter"):
+        try:
+            with st.spinner("Consultando OpenRouter..."):
+                reply = send_openrouter_message(prompt, api_key, model=model)
+        except OpenRouterError as error:
+            st.error(str(error))
+            return
+
+        st.subheader("Respuesta")
+        st.markdown(reply.content)
+        st.caption(f"Modelo usado: {reply.model}")
+        if reply.usage:
+            st.json(reply.usage)
+
+
+def render_upload_state() -> None:
+    apply_theme()
+    st.title("Upload + session state")
+    st.write(
+        "Sube un CSV para compararlo contra el dataset de Bitcoin incluido y ver cómo "
+        "`st.session_state` conserva información entre reruns."
+    )
+
+    uploaded_file = st.file_uploader("CSV", type=["csv"])
+    if uploaded_file is not None:
+        uploaded = pd.read_csv(uploaded_file)
+        st.session_state["uploaded_metadata"] = {
+            "name": uploaded_file.name,
+            "rows": len(uploaded),
+            "columns": list(uploaded.columns),
+        }
+        st.session_state["uploaded_preview"] = uploaded.head(20)
+
+    metadata = st.session_state.get("uploaded_metadata")
+    preview = st.session_state.get("uploaded_preview")
+
+    if metadata is None:
+        st.info("Todavía no hay un CSV cargado.")
+        return
+
+    built_in = get_bitcoin_data()
+    st.subheader("Resumen del archivo")
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Archivo", metadata["name"])
+    col2.metric("Filas cargadas", f"{metadata['rows']:,}")
+    col3.metric("Filas Bitcoin", f"{len(built_in):,}")
+
+    shared_columns = sorted(set(metadata["columns"]).intersection(built_in.columns))
+    st.write("Columnas cargadas:", ", ".join(metadata["columns"]))
+    st.write("Columnas compartidas con Bitcoin:", ", ".join(shared_columns) or "Ninguna")
+
+    st.subheader("Preview guardado en session state")
+    st.dataframe(preview, width="stretch")
+
+    if st.button("Limpiar datos cargados"):
+        del st.session_state["uploaded_metadata"]
+        del st.session_state["uploaded_preview"]
+        st.rerun()
+
+
+def read_streamlit_secret(name: str) -> str:
+    try:
+        value = st.secrets.get(name, "")
+    except Exception:
+        return ""
+    return str(value).strip()
+
+
+def render_bitcoin_dashboard(data: pd.DataFrame, download_filename: str) -> None:
     min_date = data["Date"].min().date()
     max_date = data["Date"].max().date()
 
@@ -203,12 +348,20 @@ def render_capstone() -> None:
     col_a, col_b = st.columns(2)
     with col_a:
         st.subheader("Cierre promedio por año")
-        yearly_close = filtered.groupby("Year")["Close"].mean() if not filtered.empty else pd.Series(dtype=float)
+        yearly_close = (
+            filtered.groupby("Year")["Close"].mean()
+            if not filtered.empty
+            else pd.Series(dtype=float)
+        )
         st.bar_chart(yearly_close)
 
     with col_b:
         st.subheader("Retorno promedio por mes")
-        monthly_return = filtered.groupby("Month_Name")["Daily_Return"].mean() if not filtered.empty else pd.Series(dtype=float)
+        monthly_return = (
+            filtered.groupby("Month_Name")["Daily_Return"].mean()
+            if not filtered.empty
+            else pd.Series(dtype=float)
+        )
         st.bar_chart(monthly_return)
 
     st.subheader("Datos filtrados")
@@ -218,7 +371,7 @@ def render_capstone() -> None:
     st.download_button(
         "Descargar datos filtrados",
         data=csv,
-        file_name="bitcoin_filtrado.csv",
+        file_name=download_filename,
         mime="text/csv",
     )
 

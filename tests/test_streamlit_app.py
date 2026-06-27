@@ -13,8 +13,9 @@ def test_main_app_smoke():
     assert not app.exception
 
 
-def test_main_app_does_not_include_ia_bonus():
+def test_main_app_includes_advanced_pages():
     source = APP_PATH.read_text()
 
-    assert "Bonus IA" not in source
-    assert "render_bonus_ai" not in source
+    assert "render_sqlite_dashboard" in source
+    assert "render_openrouter_chat" in source
+    assert "render_upload_state" in source

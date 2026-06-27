@@ -34,8 +34,7 @@ MONTH_NAMES = {
 }
 
 
-def load_bitcoin_data(path: str | Path) -> pd.DataFrame:
-    data = pd.read_csv(path)
+def prepare_bitcoin_data(data: pd.DataFrame) -> pd.DataFrame:
     missing = REQUIRED_COLUMNS.difference(data.columns)
     if missing:
         missing_columns = ", ".join(sorted(missing))
@@ -46,6 +45,10 @@ def load_bitcoin_data(path: str | Path) -> pd.DataFrame:
     data = data.sort_values("Date").reset_index(drop=True)
     data["Month_Name"] = data["Month"].map(MONTH_NAMES)
     return data
+
+
+def load_bitcoin_data(path: str | Path) -> pd.DataFrame:
+    return prepare_bitcoin_data(pd.read_csv(path))
 
 
 def filter_bitcoin_data(

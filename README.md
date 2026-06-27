@@ -6,8 +6,9 @@ Repo para un mini-curso de **2 horas** sobre Streamlit. Toma el dataset limpio d
 
 ## Qué incluye
 
-- Una app Streamlit completa en `streamlit_app.py` con 5 páginas de navegación.
+- Una app Streamlit completa en `streamlit_app.py` con 8 páginas de navegación.
 - Dataset de Bitcoin en `data/btc_diario_limpio.csv` (5,285 filas diarias, 2012-01-01 → 2026-06-23).
+- Base SQLite en `data/bitcoin.db` con el mismo dataset para practicar conexiones SQL.
 - Helpers de Pandas en `src/streamlit_course/data_utils.py`.
 - Tests en `tests/`.
 - Una presentación interactiva en `slides/open-slide/` (deck React con open-slide).
@@ -19,6 +20,9 @@ Repo para un mini-curso de **2 horas** sobre Streamlit. Toma el dataset limpio d
 3. **Pandas interactivo** — widgets conectados a filtros de Pandas sobre el dataset real.
 4. **Dashboard Bitcoin** — sidebar con filtros, seis métricas, tres gráficas, tabla y descarga CSV.
 5. **Despliegue** — vista previa de cómo publicar en Streamlit Community Cloud.
+6. **Dashboard SQLite** — el mismo dashboard, cargando datos desde `st.connection`.
+7. **OpenRouter chat** — input de texto y respuesta de un modelo vía API.
+8. **Upload + session state** — carga de CSV, comparación de columnas y persistencia con `st.session_state`.
 
 ## Dashboard Bitcoin
 
@@ -64,6 +68,36 @@ Repo para un mini-curso de **2 horas** sobre Streamlit. Toma el dataset limpio d
 | `Daily_Return` | Retorno porcentual diario (1 NaN).   |
 
 `Month_Name` se deriva al cargar (`Ene`, `Feb`, …, `Dic`).
+
+## SQLite
+
+`data/bitcoin.db` contiene la tabla `bitcoin_daily` con las mismas 5,285 filas del CSV. Para reconstruirla:
+
+```bash
+python scripts/build_sqlite.py
+```
+
+La página **Dashboard SQLite** usa `st.connection("bitcoin_db", type="sql")` y consulta:
+
+```sql
+SELECT * FROM bitcoin_daily ORDER BY Date
+```
+
+## OpenRouter
+
+Copia el archivo de ejemplo si quieres guardar la API key localmente:
+
+```bash
+cp .streamlit/secrets.toml.example .streamlit/secrets.toml
+```
+
+Luego edita `.streamlit/secrets.toml` y define:
+
+```toml
+OPENROUTER_API_KEY = "tu_api_key"
+```
+
+La app también permite pegar una llave temporal desde la sidebar de la página **OpenRouter chat**. No subas `.streamlit/secrets.toml` al repositorio.
 
 ## Setup local
 
@@ -143,7 +177,8 @@ cd slides/open-slide && npm run dev  # presentar las slides
 streamlit_app.py                  # Punto de entrada de la app
 src/streamlit_course/             # Lógica reutilizable y páginas
 data/btc_diario_limpio.csv        # Dataset de Bitcoin (Semana 3)
-solution/                         # Notas de solución
+data/bitcoin.db                   # SQLite generado desde el CSV
+scripts/build_sqlite.py           # Regenera la base SQLite
 slides/open-slide/                # Presentación interactiva (open-slide)
 tests/                            # Pruebas automatizadas
 ```
