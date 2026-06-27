@@ -1,7 +1,10 @@
 import type { DesignSystem, Page, SlideMeta, SlideTransition } from '@open-slide/core';
 import { useSlidePageNumber } from '@open-slide/core';
+import cugdlLogo from './assets/cugdl-logo.png';
+import gdgLogo from './assets/gdg-logo.png';
 import ivan from './assets/ivan.jpeg';
 import linkedin from './assets/linkedin.png';
+import movIndigoLogo from './assets/mov-indigo-logo.png';
 import repo from './assets/repo.png';
 import slidesQr from './assets/slides.png';
 
@@ -419,6 +422,30 @@ const BtcRing = ({ size = 460 }: { size?: number }) => (
 const Cover: Page = () => (
   <Frame>
     <div className="osd-fade-up" style={{ position: 'absolute', left: 112, top: 210, width: 1180 }}>
+      <div style={{ display: 'flex', gap: 32, marginBottom: 48 }}>
+        {[
+          { src: cugdlLogo, alt: 'UdeG' },
+          { src: gdgLogo, alt: 'GDG' },
+          { src: movIndigoLogo, alt: 'MOV Indigo' },
+        ].map(({ src, alt }) => (
+          <div
+            key={alt}
+            style={{
+              background: '#fff',
+              borderRadius: 12,
+              padding: '14px 24px',
+              width: 340,
+              height: 110,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 18px 40px -22px rgba(0,0,0,0.8)',
+            }}
+          >
+            <img src={src} alt={alt} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block' }} />
+          </div>
+        ))}
+      </div>
       <Eyebrow>Taller UdeG x GDG</Eyebrow>
       <Title>Streamlit</Title>
       <p style={{ fontSize: 56, lineHeight: 1.2, color: 'var(--osd-text)', maxWidth: 1080, margin: '28px 0 0', fontWeight: 500 }}>
